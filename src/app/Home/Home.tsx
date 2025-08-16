@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Flex, FlexItem, List, ListItem, PageSection, Title } from '@patternfly/react-core';
 import logo from '../../logo.png';
 
-const Dashboard: React.FunctionComponent = () => (
+const Home: React.FunctionComponent = () => (
   <>
     <PageSection>
       <Flex alignItems={{ default: 'alignItemsCenter' }}>
@@ -61,4 +61,4 @@ const Dashboard: React.FunctionComponent = () => (
   </>
 );
 
-export { Dashboard };
+export { Home };

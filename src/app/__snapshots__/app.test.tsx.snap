@@ -204,84 +204,24 @@ exports[`App tests should render default App component 1`] = `
               <a
                 class="pf-v6-c-nav__link"
                 data-discover="true"
-                href="/support"
+                href="/templates"
               >
-                Support
+                Templates
               </a>
             </li>
             <li
               class="pf-v6-c-nav__item"
-              data-ouia-component-id="OUIA-Generated-NavExpandable-1"
-              data-ouia-component-type="PF6/NavExpandable"
+              data-ouia-component-id="OUIA-Generated-NavItem-3"
+              data-ouia-component-type="PF6/NavItem"
               data-ouia-safe="true"
             >
-              <button
-                aria-expanded="false"
+              <a
                 class="pf-v6-c-nav__link"
-                id="Settings-2"
+                data-discover="true"
+                href="/proposals"
               >
-                Settings
-                <span
-                  class="pf-v6-c-nav__toggle"
-                >
-                  <span
-                    class="pf-v6-c-nav__toggle-icon"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      class="pf-v6-svg"
-                      fill="currentColor"
-                      height="1em"
-                      role="img"
-                      viewBox="0 0 256 512"
-                      width="1em"
-                    >
-                      <path
-                        d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
-                      />
-                    </svg>
-                  </span>
-                </span>
-              </button>
-              <section
-                aria-labelledby="Settings-2"
-                class="pf-v6-c-nav__subnav"
-                hidden=""
-              >
-                <ul
-                  class="pf-v6-c-nav__list"
-                  role="list"
-                >
-                  <li
-                    class="pf-v6-c-nav__item"
-                    data-ouia-component-id="OUIA-Generated-NavItem-3"
-                    data-ouia-component-type="PF6/NavItem"
-                    data-ouia-safe="true"
-                  >
-                    <a
-                      class="pf-v6-c-nav__link"
-                      data-discover="true"
-                      href="/settings/general"
-                    >
-                      General
-                    </a>
-                  </li>
-                  <li
-                    class="pf-v6-c-nav__item"
-                    data-ouia-component-id="OUIA-Generated-NavItem-4"
-                    data-ouia-component-type="PF6/NavItem"
-                    data-ouia-safe="true"
-                  >
-                    <a
-                      class="pf-v6-c-nav__link"
-                      data-discover="true"
-                      href="/settings/profile"
-                    >
-                      Profile
-                    </a>
-                  </li>
-                </ul>
-              </section>
+                Proposals
+              </a>
             </li>
           </ul>
         </nav>
