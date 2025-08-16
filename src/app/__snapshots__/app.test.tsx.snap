@@ -192,7 +192,7 @@ exports[`App tests should render default App component 1`] = `
                 data-discover="true"
                 href="/"
               >
-                Dashboard
+                Home
               </a>
             </li>
             <li
@@ -298,14 +298,186 @@ exports[`App tests should render default App component 1`] = `
         <section
           class="pf-v6-c-page__main-section"
         >
-          <h1
-            class="pf-v6-c-title pf-m-lg"
-            data-ouia-component-id="OUIA-Generated-Title-1"
-            data-ouia-component-type="PF6/Title"
-            data-ouia-safe="true"
+          <div
+            class="pf-v6-c-page__main-body"
           >
-            Dashboard Page Title!
-          </h1>
+            <div
+              class="pf-v6-l-flex pf-m-align-items-center"
+            >
+              <div
+                class=""
+              >
+                <img
+                  alt="Task Tally logo"
+                  src="test-file-stub"
+                  style="max-width: 150px;"
+                />
+              </div>
+              <div
+                class=""
+              >
+                <h1
+                  class="pf-v6-c-title pf-m-4xl"
+                  data-ouia-component-id="OUIA-Generated-Title-1"
+                  data-ouia-component-type="PF6/Title"
+                  data-ouia-safe="true"
+                >
+                  Task Tally
+                </h1>
+                <p>
+                  An estimation tool based on "The art of project estimation" book. This tool allows users to create consulting estimates.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="pf-v6-c-page__main-section"
+        >
+          <div
+            class="pf-v6-c-page__main-body"
+          >
+            <div>
+              <h2
+                class="pf-v6-c-title pf-m-xl"
+                data-ouia-component-id="OUIA-Generated-Title-2"
+                data-ouia-component-type="PF6/Title"
+                data-ouia-safe="true"
+              >
+                Ever wanted to propose a Container Adoption Journey, but just a little different?
+              </h2>
+              <p>
+                We can do that, in a fraction of the time.
+              </p>
+              <h2
+                class="pf-v6-c-title pf-m-xl"
+                data-ouia-component-id="OUIA-Generated-Title-3"
+                data-ouia-component-type="PF6/Title"
+                data-ouia-safe="true"
+              >
+                What is a 3 point estimate?
+              </h2>
+              <ul
+                class="pf-v6-c-list"
+              >
+                <li
+                  class=""
+                >
+                  <span>
+                    An analytical and quantitative approach to estimate the Level of Effort (LOE) for projects
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Based on industry best practices
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Reduces risk that projects will be under or over sized
+                  </span>
+                </li>
+              </ul>
+              <h2
+                class="pf-v6-c-title pf-m-xl"
+                data-ouia-component-id="OUIA-Generated-Title-4"
+                data-ouia-component-type="PF6/Title"
+                data-ouia-safe="true"
+              >
+                Architects model:
+              </h2>
+              <ul
+                class="pf-v6-c-list"
+              >
+                <li
+                  class=""
+                >
+                  <span>
+                    The amount of time each task will take
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Allocate tasks to different phases of the project
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    And/or different teams working in parallel
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    How many consultants, with what titles and skill levels, are on each team
+                  </span>
+                </li>
+              </ul>
+              <h2
+                class="pf-v6-c-title pf-m-xl"
+                data-ouia-component-id="OUIA-Generated-Title-5"
+                data-ouia-component-type="PF6/Title"
+                data-ouia-safe="true"
+              >
+                Allows us to quickly:
+              </h2>
+              <ul
+                class="pf-v6-c-list"
+              >
+                <li
+                  class=""
+                >
+                  <span>
+                    Start with a standard solution
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Add multiple modules and/or solutions together
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Modify, remove, or add new tasks not in the standard solutions
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Run “what-if” scenarios
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    How much would it cost if we had a larger/smaller team?
+                  </span>
+                </li>
+                <li
+                  class=""
+                >
+                  <span>
+                    Which tasks/phases are the expensive ones, and how could we change scope to reduce cost?
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </section>
       </main>
     </div>

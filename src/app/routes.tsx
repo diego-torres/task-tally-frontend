@@ -28,9 +28,9 @@ const routes: AppRouteConfig[] = [
   {
     element: <Dashboard />,
     exact: true,
-    label: 'Dashboard',
+    label: 'Home',
     path: '/',
-    title: 'PatternFly Seed | Main Dashboard',
+    title: 'Task Tally | Home',
   },
   {
     element: <Support />,
