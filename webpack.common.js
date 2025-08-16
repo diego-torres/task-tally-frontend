@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -7,7 +8,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
-module.exports = (env) => {
+module.exports = () => {
   return {
     module: {
       rules: [
@@ -39,9 +40,10 @@ module.exports = (env) => {
         {
           test: /\.svg$/,
           type: 'asset/inline',
-          include: (input) => input.indexOf('background-filter.svg') > 1,
+          include: (input) => typeof input === 'string' && input.indexOf('background-filter.svg') > 1,
           use: [
             {
+              loader: 'url-loader',
               options: {
                 limit: 5000,
                 outputPath: 'svgs',
@@ -54,7 +56,7 @@ module.exports = (env) => {
           test: /\.svg$/,
           // only process SVG modules with this loader if they live under a 'bgimages' directory
           // this is primarily useful when applying a CSS background using an SVG
-          include: (input) => input.indexOf(BG_IMAGES_DIRNAME) > -1,
+          include: (input) => typeof input === 'string' && input.indexOf(BG_IMAGES_DIRNAME) > -1,
           type: 'asset/inline',
         },
         {
@@ -62,6 +64,7 @@ module.exports = (env) => {
           // only process SVG modules with this loader when they don't live under a 'bgimages',
           // 'fonts', or 'pficon' directory, those are handled with other loaders
           include: (input) =>
+            typeof input === 'string' &&
             input.indexOf(BG_IMAGES_DIRNAME) === -1 &&
             input.indexOf('fonts') === -1 &&
             input.indexOf('background-filter') === -1 &&
@@ -92,16 +95,12 @@ module.exports = (env) => {
               'node_modules/@patternfly/react-inline-edit-extension/node_modules/@patternfly/react-styles/css/assets/images'
             ),
           ],
-          type: 'asset/inline',
-          use: [
-            {
-              options: {
-                limit: 5000,
-                outputPath: 'images',
-                name: '[name].[ext]',
-              },
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: 5000,
             },
-          ],
+          },
         },
       ],
     },
