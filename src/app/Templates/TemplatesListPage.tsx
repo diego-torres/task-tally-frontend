@@ -53,10 +53,14 @@ const TemplatesListPage: React.FC = () => {
           setToDelete(tpl);
         }}
       />
-      <Modal isOpen={!!toDelete} onClose={() => setToDelete(null)}>
+      <Modal
+        isOpen={!!toDelete}
+        onClose={() => setToDelete(null)}
+        style={{ maxWidth: 350, margin: '0 auto' }}
+      >
         <ModalHeader>Delete template</ModalHeader>
         <ModalBody>
-          Are you sure you want to delete {toDelete?.name}?
+          Are you sure you want to delete <b>{toDelete?.name}</b>?
         </ModalBody>
         <ModalFooter>
           <Button variant="danger" onClick={confirmDelete}>
