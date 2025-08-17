@@ -25,6 +25,14 @@ describe('App tests', () => {
     expect(screen.getByRole('link', { name: 'Home' })).toBeVisible();
   });
 
+  it('should include Git SSH keys in the navigation', () => {
+    render(<App />);
+
+    window.dispatchEvent(new Event('resize'));
+
+    expect(screen.getByRole('link', { name: 'Git SSH keys' })).toBeVisible();
+  });
+
   it('should hide the sidebar when clicking the nav-toggle button', async () => {
     const user = userEvent.setup();
 
