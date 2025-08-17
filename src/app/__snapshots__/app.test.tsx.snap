@@ -274,153 +274,163 @@ exports[`App tests should render default App component 1`] = `
             class="pf-v6-c-page__main-body"
           >
             <div
-              class="pf-v6-l-flex pf-m-column pf-m-align-items-center"
+              class="pf-v6-l-flex pf-m-column pf-m-align-items-center pf-m-justify-content-center"
+              style="min-height: 350px;"
             >
-              <h2
-                class="pf-v6-c-title pf-m-lg"
-                data-ouia-component-id="OUIA-Generated-Title-2"
-                data-ouia-component-type="PF6/Title"
-                data-ouia-safe="true"
-                style="text-align: center; margin-bottom: 1rem;"
-              >
-                Templates & Proposals Overview
-              </h2>
-              <svg
-                height="260"
-                style="max-width: 100%; height: auto; margin-bottom: 1rem;"
-                viewBox="0 0 800 260"
-                width="800"
-              >
-                <rect
-                  fill="#e3f2fd"
-                  height="80"
-                  rx="15"
-                  stroke="#1976d2"
-                  stroke-width="2"
-                  width="240"
-                  x="3"
-                  y="40"
-                />
-                <text
-                  fill="#1976d2"
-                  font-size="18"
-                  font-weight="bold"
-                  text-anchor="middle"
-                  x="140"
-                  y="70"
-                >
-                  Templates
-                </text>
-                <text
-                  fill="#1976d2"
-                  font-size="13"
-                  text-anchor="middle"
-                  x="122"
-                  y="95"
-                >
-                  Reusable groups of tasks, outcomes, etc.
-                </text>
-                <polygon
-                  fill="#1976d2"
-                  points="250,80 290,80 290,70 320,90 290,110 290,100 250,100"
-                />
-                <text
-                  fill="#1976d2"
-                  font-size="12"
-                  text-anchor="middle"
-                  x="285"
-                  y="65"
-                >
-                  can create
-                </text>
-                <rect
-                  fill="#fff3e0"
-                  height="80"
-                  rx="15"
-                  stroke="#f57c00"
-                  stroke-width="2"
-                  width="240"
-                  x="320"
-                  y="40"
-                />
-                <text
-                  fill="#f57c00"
-                  font-size="18"
-                  font-weight="bold"
-                  text-anchor="middle"
-                  x="440"
-                  y="70"
-                >
-                  Proposals
-                </text>
-                <text
-                  fill="#f57c00"
-                  font-size="13"
-                  text-anchor="middle"
-                  x="440"
-                  y="95"
-                >
-                  Estimate project effort
-                </text>
-                <text
-                  fill="#f57c00"
-                  font-size="13"
-                  text-anchor="middle"
-                  x="440"
-                  y="112"
-                >
-                  Composed of templates + custom tasks
-                </text>
-                <rect
-                  fill="#fce4ec"
-                  height="60"
-                  rx="12"
-                  stroke="#c2185b"
-                  stroke-width="2"
-                  width="210"
-                  x="350"
-                  y="140"
-                />
-                <text
-                  fill="#c2185b"
-                  font-size="15"
-                  font-weight="bold"
-                  text-anchor="middle"
-                  x="460"
-                  y="170"
-                >
-                  Additional Tasks/Elements
-                </text>
-                <text
-                  fill="#c2185b"
-                  font-size="12"
-                  text-anchor="middle"
-                  x="460"
-                  y="190"
-                >
-                  Specific to each project proposal
-                </text>
-                <polygon
-                  fill="#c2185b"
-                  points="460,140 460,130 455,130 460,120 465,130 460,130"
-                />
-              </svg>
               <div
-                style="max-width: 500px; text-align: center;"
+                class="pf-v6-l-flex pf-m-column pf-m-align-items-center"
+                style="width: 100%;"
               >
-                <p
-                  style="font-size: 1rem;"
+                <h2
+                  class="pf-v6-c-title pf-m-lg"
+                  data-ouia-component-id="OUIA-Generated-Title-2"
+                  data-ouia-component-type="PF6/Title"
+                  data-ouia-safe="true"
+                  style="text-align: center; margin-bottom: 1rem;"
                 >
-                  <strong>
-                    Templates
-                  </strong>
-                   describe reusable groups of tasks, outcomes, and more.
-                  <br />
-                  <strong>
-                    Proposals
-                  </strong>
-                   estimate project effort, combining one or more templates and additional tasks unique to the project.
-                </p>
+                  Templates & Proposals Overview
+                </h2>
+                <div
+                  style="display: flex; justify-content: center; width: 100%;"
+                >
+                  <svg
+                    height="260"
+                    style="max-width: 100%; height: auto; margin-bottom: 1rem; display: block;"
+                    viewBox="0 0 800 260"
+                    width="800"
+                  >
+                    <rect
+                      fill="#e3f2fd"
+                      height="80"
+                      rx="15"
+                      stroke="#1976d2"
+                      stroke-width="2"
+                      width="240"
+                      x="3"
+                      y="40"
+                    />
+                    <text
+                      fill="#1976d2"
+                      font-size="18"
+                      font-weight="bold"
+                      text-anchor="middle"
+                      x="140"
+                      y="70"
+                    >
+                      Templates
+                    </text>
+                    <text
+                      fill="#1976d2"
+                      font-size="13"
+                      text-anchor="middle"
+                      x="122"
+                      y="95"
+                    >
+                      Reusable groups of tasks, outcomes, etc.
+                    </text>
+                    <polygon
+                      fill="#1976d2"
+                      points="250,80 290,80 290,70 320,90 290,110 290,100 250,100"
+                    />
+                    <text
+                      fill="#1976d2"
+                      font-size="12"
+                      text-anchor="middle"
+                      x="285"
+                      y="65"
+                    >
+                      can create
+                    </text>
+                    <rect
+                      fill="#fff3e0"
+                      height="80"
+                      rx="15"
+                      stroke="#f57c00"
+                      stroke-width="2"
+                      width="240"
+                      x="320"
+                      y="40"
+                    />
+                    <text
+                      fill="#f57c00"
+                      font-size="18"
+                      font-weight="bold"
+                      text-anchor="middle"
+                      x="440"
+                      y="70"
+                    >
+                      Proposals
+                    </text>
+                    <text
+                      fill="#f57c00"
+                      font-size="13"
+                      text-anchor="middle"
+                      x="440"
+                      y="95"
+                    >
+                      Estimate project effort
+                    </text>
+                    <text
+                      fill="#f57c00"
+                      font-size="13"
+                      text-anchor="middle"
+                      x="440"
+                      y="112"
+                    >
+                      Composed of templates + custom tasks
+                    </text>
+                    <rect
+                      fill="#fce4ec"
+                      height="60"
+                      rx="12"
+                      stroke="#c2185b"
+                      stroke-width="2"
+                      width="210"
+                      x="350"
+                      y="140"
+                    />
+                    <text
+                      fill="#c2185b"
+                      font-size="15"
+                      font-weight="bold"
+                      text-anchor="middle"
+                      x="460"
+                      y="170"
+                    >
+                      Additional Tasks/Elements
+                    </text>
+                    <text
+                      fill="#c2185b"
+                      font-size="12"
+                      text-anchor="middle"
+                      x="460"
+                      y="190"
+                    >
+                      Specific to each project proposal
+                    </text>
+                    <polygon
+                      fill="#c2185b"
+                      points="460,140 460,130 455,130 460,120 465,130 460,130"
+                    />
+                  </svg>
+                </div>
+                <div
+                  style="max-width: 500px; text-align: center; margin: 0px auto;"
+                >
+                  <p
+                    style="font-size: 1rem;"
+                  >
+                    <strong>
+                      Templates
+                    </strong>
+                     describe reusable groups of tasks, outcomes, and more.
+                    <br />
+                    <strong>
+                      Proposals
+                    </strong>
+                     estimate project effort, combining one or more templates and additional tasks unique to the project.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
