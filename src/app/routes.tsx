@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Home } from '@app/Home/Home';
 import { Templates } from '@app/Templates/Templates';
 import { Proposals } from '@app/Proposals/Proposals';
@@ -23,7 +23,7 @@ const routes: AppRouteConfig[] = [
     element: <Home />,
     exact: true,
     label: 'Home',
-    path: '/',
+    path: '/home',
     title: 'Task Tally | Home',
   },
   {
@@ -42,9 +42,9 @@ const routes: AppRouteConfig[] = [
   {
     element: <GitSSHKeys />,
     exact: true,
-    label: 'Git SSH keys',
-    path: '/git-ssh-keys',
-    title: 'Task Tally | Git SSH keys',
+    label: 'Credentials',
+    path: '/credentials',
+    title: 'Task Tally | Credentials',
   },
 ];
 
@@ -53,6 +53,7 @@ const AppRoutes = (): React.ReactElement => (
     {routes.map(({ path, element }, idx) => (
       <Route path={path} element={element} key={idx} />
     ))}
+    <Route path="/" element={<Navigate to="/home" replace />} />
     <Route element={<NotFound />} />
   </Routes>
 );

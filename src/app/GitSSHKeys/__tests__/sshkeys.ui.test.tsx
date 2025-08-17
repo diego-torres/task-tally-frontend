@@ -19,9 +19,9 @@ jest.mock('@api/credentials/service', () => {
 
 const renderPage = () =>
   render(
-    <MemoryRouter initialEntries={['/git-ssh-keys']}>
+    <MemoryRouter initialEntries={['/credentials']}>
       <Routes>
-        <Route path="/git-ssh-keys" element={<GitSSHKeys />} />
+        <Route path="/credentials" element={<GitSSHKeys />} />
       </Routes>
     </MemoryRouter>,
   );
