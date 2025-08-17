@@ -24,6 +24,7 @@
 - Type-check with `npm run type-check`.
 
 ## Testing
+- sync the snapshots with `npm test -- -u`
 - Run unit tests via `npm test`.
 - For coverage and CI-style checks use `npm run ci-checks`.
 

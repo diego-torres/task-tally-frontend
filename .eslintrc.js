@@ -1,4 +1,5 @@
 module.exports = {
+  ignorePatterns: [".eslintrc.js"],
   // tells eslint to use the TypeScript parser
   "parser": "@typescript-eslint/parser",
   // tell the TypeScript parser that we want to use JSX syntax
@@ -39,6 +40,12 @@ module.exports = {
         "react/prop-types": "off",
         "@typescript-eslint/no-unused-vars": "error"
       },
+    },
+    {
+      "files": ["**/__tests__/**/*.ts", "**/__tests__/**/*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
     },
   ],
   "settings": {

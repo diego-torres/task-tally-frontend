@@ -3,15 +3,19 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { GitSSHKeys } from '@app/GitSSHKeys/GitSSHKeys';
-import * as mock from '@api/credentials/mock';
 import { __reset as resetKeys } from '@api/credentials/mock';
 import '@testing-library/jest-dom';
 
-jest.mock('@api/credentials/service', () => ({
-  createSshKey: mock.createSshKey,
-  deleteSshKey: mock.deleteSshKey,
-  listSshKeys: mock.listSshKeys,
-}));
+// Use CommonJS require for Jest mock factory, with eslint-disable for linter
+jest.mock('@api/credentials/service', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mock = require('@api/credentials/mock');
+  return {
+    createSshKey: mock.createSshKey,
+    deleteSshKey: mock.deleteSshKey,
+    listSshKeys: mock.listSshKeys,
+  };
+});
 
 const renderPage = () =>
   render(
