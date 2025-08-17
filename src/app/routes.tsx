@@ -4,6 +4,7 @@ import { Home } from '@app/Home/Home';
 import { Templates } from '@app/Templates/Templates';
 import { Proposals } from '@app/Proposals/Proposals';
 import { NotFound } from '@app/NotFound/NotFound';
+import { GitSSHKeys } from '@app/GitSSHKeys/GitSSHKeys';
 
 export interface IAppRoute {
   label?: string; // Excluding the label will exclude the route from the nav sidebar in AppLayout
@@ -37,6 +38,13 @@ const routes: AppRouteConfig[] = [
     label: 'Proposals',
     path: '/proposals',
     title: 'Task Tally | Proposals',
+  },
+  {
+    element: <GitSSHKeys />,
+    exact: true,
+    label: 'Git SSH keys',
+    path: '/git-ssh-keys',
+    title: 'Task Tally | Git SSH keys',
   },
 ];
 
