@@ -67,27 +67,41 @@ const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ children, mo
   const login = () => {
     const google = (window as Window & { google?: GoogleId }).google;
     if (google?.accounts.id) {
-      google.accounts.id.initialize({
-        client_id: clientId,
-        callback: (res: { credential: string }) => {
-          console.log('[GIS] credential', res);
-          try {
-            const payload = JSON.parse(atob(res.credential.split('.')[1]));
-            setUser(payload);
-            setToken(res.credential);
-            localStorage.setItem('auth_user', JSON.stringify(payload));
-            localStorage.setItem('auth_token', res.credential);
-            window.location.href = '/home';
-          } catch {
-            // ignore parsing errors
+      const handleCredential = (res: { credential: string }) => {
+        console.log('[GIS] credential', res);
+        try {
+          const payload = JSON.parse(atob(res.credential.split('.')[1]));
+          setUser(payload);
+          setToken(res.credential);
+          localStorage.setItem('auth_user', JSON.stringify(payload));
+          localStorage.setItem('auth_token', res.credential);
+          window.location.href = '/home';
+        } catch {
+          // ignore parsing errors
+        }
+      };
+
+      const initGis = (useFedCM: boolean) => {
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCredential,
+          use_fedcm_for_prompt: useFedCM,
+          ux_mode: 'popup',
+          auto_select: false,
+          itp_support: true,
+        });
+
+        google.accounts.id.prompt((n: unknown) => {
+          console.log('[GIS] prompt', n);
+          const reason = (n as { g?: string })?.g;
+          if (useFedCM && (reason === 'skipped' || reason === 'dismissed')) {
+            console.warn('[GIS] FedCM skipped/blocked; retrying with classic GIS…');
+            initGis(false);
           }
-        },
-        use_fedcm_for_prompt: true,
-        ux_mode: 'popup',
-        auto_select: false,
-        itp_support: true,
-      });
-      google.accounts.id.prompt((n: unknown) => console.log('[GIS] prompt', n));
+        });
+      };
+
+      initGis(true);
     }
   };
 
