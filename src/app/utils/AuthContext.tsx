@@ -32,8 +32,15 @@ interface AuthProviderProps {
 type GoogleId = {
   accounts: {
     id: {
-      initialize: (opts: { client_id: string; callback: (res: { credential: string }) => void }) => void;
-      prompt: () => void;
+      initialize: (opts: {
+        client_id: string;
+        callback: (res: { credential: string }) => void;
+        use_fedcm_for_prompt?: boolean;
+        ux_mode?: string;
+        auto_select?: boolean;
+        itp_support?: boolean;
+      }) => void;
+      prompt: (cb?: (notification: unknown) => void) => void;
     };
   };
 };
@@ -63,6 +70,7 @@ const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ children, mo
       google.accounts.id.initialize({
         client_id: clientId,
         callback: (res: { credential: string }) => {
+          console.log('[GIS] credential', res);
           try {
             const payload = JSON.parse(atob(res.credential.split('.')[1]));
             setUser(payload);
@@ -74,8 +82,12 @@ const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ children, mo
             // ignore parsing errors
           }
         },
+        use_fedcm_for_prompt: true,
+        ux_mode: 'popup',
+        auto_select: false,
+        itp_support: true,
       });
-      google.accounts.id.prompt();
+      google.accounts.id.prompt((n: unknown) => console.log('[GIS] prompt', n));
     }
   };
 
