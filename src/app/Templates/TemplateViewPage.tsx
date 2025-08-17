@@ -23,7 +23,7 @@ const TemplateViewPage: React.FC = () => {
     async function load() {
       if (id) {
         try {
-          const res = await getTemplate(id);
+          const res = await getTemplate('me', id);
           setTpl(res);
         } catch (err: unknown) {
           if (err instanceof Error) {
@@ -74,16 +74,23 @@ const TemplateViewPage: React.FC = () => {
         </DescriptionListGroup>
         <DescriptionListGroup>
           <DescriptionListTerm>Updated</DescriptionListTerm>
-          <DescriptionListDescription>{formatDate(tpl.updatedAt)}</DescriptionListDescription>
+          <DescriptionListDescription>{tpl.updatedAt ? formatDate(tpl.updatedAt) : '-'}</DescriptionListDescription>
         </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>Outcomes</DescriptionListTerm>
-          <DescriptionListDescription>{files.outcomes?.length || 0}</DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>Tasks</DescriptionListTerm>
-          <DescriptionListDescription>{files.tasks?.length || 0}</DescriptionListDescription>
-        </DescriptionListGroup>
+        {[
+          ['Outcomes', files.outcomes?.length || 0],
+          ['Tasks', files.tasks?.length || 0],
+          ['Risks', files.risks?.length || 0],
+          ['Out of scope', files.outOfScope?.length || 0],
+          ['Prereqs', files.prereqs?.length || 0],
+          ['Training', files.training?.length || 0],
+          ['Team roles', files.teamRoles?.length || 0],
+          ['Team modeling', Array.isArray(files.teamModeling) ? files.teamModeling.length : 0],
+        ].map(([term, val]) => (
+          <DescriptionListGroup key={term as string}>
+            <DescriptionListTerm>{term}</DescriptionListTerm>
+            <DescriptionListDescription>{val as number}</DescriptionListDescription>
+          </DescriptionListGroup>
+        ))}
       </DescriptionList>
     </PageSection>
   );

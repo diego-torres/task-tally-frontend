@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  PageSection,
-} from '@patternfly/react-core';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, PageSection } from '@patternfly/react-core';
 import { useNavigate } from '@lib/router';
 import TemplatesTable from './TemplatesTable';
 import { deleteTemplate, listTemplates } from '@api/templates/service';
@@ -18,8 +11,8 @@ const TemplatesListPage: React.FC = () => {
   const [toDelete, setToDelete] = React.useState<TemplateDto | null>(null);
 
   const refresh = React.useCallback(async () => {
-    const res = await listTemplates();
-    setTemplates(res.items);
+    const res = await listTemplates('me');
+    setTemplates(res);
   }, []);
 
   React.useEffect(() => {
@@ -28,7 +21,7 @@ const TemplatesListPage: React.FC = () => {
 
   const confirmDelete = async () => {
     if (toDelete) {
-      await deleteTemplate(toDelete.id);
+      await deleteTemplate('me', toDelete.id);
       setToDelete(null);
       void refresh();
     }
@@ -37,11 +30,8 @@ const TemplatesListPage: React.FC = () => {
   return (
     <PageSection>
       <div style={{ marginBottom: '1.5rem' }}>
-        <Button
-          variant="primary"
-          onClick={() => navigate('/templates/new')}
-        >
-          Create template
+        <Button variant="primary" onClick={() => navigate('/templates/new')}>
+          New Template
         </Button>
       </div>
       <TemplatesTable
@@ -53,11 +43,7 @@ const TemplatesListPage: React.FC = () => {
           setToDelete(tpl);
         }}
       />
-      <Modal
-        isOpen={!!toDelete}
-        onClose={() => setToDelete(null)}
-        style={{ maxWidth: 350, margin: '0 auto' }}
-      >
+      <Modal isOpen={!!toDelete} onClose={() => setToDelete(null)} style={{ maxWidth: 350, margin: '0 auto' }}>
         <ModalHeader>Delete template</ModalHeader>
         <ModalBody>
           Are you sure you want to delete <b>{toDelete?.name}</b>?

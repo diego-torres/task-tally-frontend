@@ -8,15 +8,13 @@ import { CreateTemplateRequest } from '@api/templates/types';
 const TemplateEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [initial, setInitial] = React.useState<CreateTemplateRequest | null>(
-    null,
-  );
+  const [initial, setInitial] = React.useState<CreateTemplateRequest | null>(null);
 
   React.useEffect(() => {
     async function load() {
       if (id) {
-        const tpl = await getTemplate(id);
-        setInitial({ ...tpl, files: tpl.files || { template: { name: tpl.name } } });
+        const tpl = await getTemplate('me', id);
+        setInitial({ ...tpl });
       }
     }
     void load();
@@ -24,7 +22,7 @@ const TemplateEditPage: React.FC = () => {
 
   const onSubmit = async (value: CreateTemplateRequest) => {
     if (id) {
-      await updateTemplate(id, value);
+      await updateTemplate('me', id, value);
       navigate(`/templates/${id}`);
     }
   };
@@ -38,9 +36,7 @@ const TemplateEditPage: React.FC = () => {
   }
 
   return (
-    <PageSection>
-      <TemplateForm initial={initial} onSubmit={onSubmit} submitLabel="Save" />
-    </PageSection>
+    <TemplateForm mode="edit" initial={initial} onSubmit={onSubmit} onCancel={() => navigate(`/templates/${id}`)} />
   );
 };
 
