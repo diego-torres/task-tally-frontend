@@ -10,7 +10,12 @@ const TemplateCreatePage: React.FC = () => {
     await createTemplate('me', value);
     navigate('/templates');
   };
-  return <TemplateForm mode="create" onSubmit={onSubmit} onCancel={() => navigate('/templates')} />;
+  return (
+    <>
+      <h1>Create Template</h1>
+      <TemplateForm mode="create" onSubmit={onSubmit} onCancel={() => navigate('/templates')} />
+    </>
+  );
 };
 
 export default TemplateCreatePage;
