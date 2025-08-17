@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  Button,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { EyeIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { TemplateDto } from '@api/templates/types';
 import { formatDate } from '@lib/formatters';
@@ -14,12 +11,7 @@ export interface TemplatesTableProps {
   onDelete: (id: string) => void;
 }
 
-const TemplatesTable: React.FC<TemplatesTableProps> = ({
-  templates,
-  onView,
-  onEdit,
-  onDelete,
-}) => (
+const TemplatesTable: React.FC<TemplatesTableProps> = ({ templates, onView, onEdit, onDelete }) => (
   <div style={{ overflowX: 'auto' }}>
     <table className="pf-c-table pf-m-compact pf-m-grid-md" role="grid" style={{ width: '100%', minWidth: '600px' }}>
       <thead>
@@ -50,7 +42,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
             <td>{t.provider}</td>
             <td>{t.sshRepoUri}</td>
             <td>{t.defaultBranch}</td>
-            <td>{formatDate(t.updatedAt)}</td>
+            <td>{t.updatedAt ? formatDate(t.updatedAt) : '-'}</td>
           </tr>
         ))}
       </tbody>
