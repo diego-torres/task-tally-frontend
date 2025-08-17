@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BackgroundImage, Bullseye, Button, Stack, StackItem, Title } from '@patternfly/react-core';
+import { Bullseye, Button, Stack, StackItem, Title } from '@patternfly/react-core';
 import { GoogleIcon } from '@patternfly/react-icons';
 import pfbg from '@assets/images/PF-Backdrop.svg';
 import { useAuth } from '@app/utils/AuthContext';
