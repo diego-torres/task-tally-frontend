@@ -5,28 +5,30 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 describe('App tests', () => {
-  test('should render default App component', () => {
+  test('should render landing page when unauthenticated', () => {
     const { asFragment } = render(<App />);
 
+    expect(screen.getByRole('heading', { name: 'Task Tally' })).toBeVisible();
+    expect(screen.getByRole('button', { name: /sign in with google/i })).toBeVisible();
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('should render a nav-toggle button', () => {
-    render(<App />);
+  it('should render a nav-toggle button when authenticated', () => {
+    render(<App mockAuthenticated />);
 
     expect(screen.getByRole('button', { name: 'Global navigation' })).toBeVisible();
   });
 
-  it('should expand the sidebar on larger viewports', () => {
-    render(<App />);
+  it('should expand the sidebar on larger viewports when authenticated', () => {
+    render(<App mockAuthenticated />);
 
     window.dispatchEvent(new Event('resize'));
 
     expect(screen.getByRole('link', { name: 'Home' })).toBeVisible();
   });
 
-  it('should include Git SSH keys in the navigation', () => {
-    render(<App />);
+  it('should include Git SSH keys in the navigation when authenticated', () => {
+    render(<App mockAuthenticated />);
 
     window.dispatchEvent(new Event('resize'));
 
@@ -36,7 +38,7 @@ describe('App tests', () => {
   it('should hide the sidebar when clicking the nav-toggle button', async () => {
     const user = userEvent.setup();
 
-    render(<App />);
+    render(<App mockAuthenticated />);
 
     window.dispatchEvent(new Event('resize'));
     const button = screen.getByRole('button', { name: 'Global navigation' });
