@@ -18,6 +18,23 @@ components:
           type: integer
           format: int32
           minimum: 0
+    CredentialDto:
+      type: object
+      properties:
+        name:
+          type: string
+        provider:
+          type: string
+        scope:
+          type: string
+        secretRef:
+          type: string
+        knownHostsRef:
+          type: string
+        passphraseRef:
+          type: string
+        createdAt:
+          $ref: "#/components/schemas/Instant"
     CredentialRequest:
       type: object
       required:
@@ -65,6 +82,11 @@ components:
           pattern: \S
         scope:
           type: string
+    Instant:
+      type: string
+      format: date-time
+      examples:
+      - 2022-03-10T16:15:50Z
     PreferencesDto:
       type: object
       required:
@@ -93,6 +115,19 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Activity"
+    SshKeyCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        provider:
+          type: string
+        privateKeyPem:
+          type: string
+        knownHosts:
+          type: string
+        passphrase:
+          type: string
     TemplateDto:
       type: object
       required:
@@ -324,6 +359,78 @@ paths:
       summary: Delete
       tags:
       - Preferences Resource
+  /api/users/{userId}/ssh-keys:
+    get:
+      summary: List SSH keys for user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-User-Id
+        in: header
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of SSH credential references
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CredentialDto"
+      tags:
+      - Ssh Keys Resource
+    post:
+      summary: Create SSH key for user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-User-Id
+        in: header
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SshKeyCreateRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+      tags:
+      - Ssh Keys Resource
+  /api/users/{userId}/ssh-keys/{name}:
+    delete:
+      summary: Delete SSH key
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-User-Id
+        in: header
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Deleted
+      tags:
+      - Ssh Keys Resource
   /api/users/{userId}/templates:
     get:
       parameters:
