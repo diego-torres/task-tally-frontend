@@ -9,7 +9,7 @@ describe('App tests', () => {
     const { asFragment } = render(<App />);
 
     expect(screen.getByRole('heading', { name: 'Task Tally' })).toBeVisible();
-    expect(screen.getByRole('button', { name: /sign in with google/i })).toBeVisible();
+    expect(screen.getByRole('link', { name: /sign in with google/i })).toBeVisible();
     expect(asFragment()).toMatchSnapshot();
   });
 
