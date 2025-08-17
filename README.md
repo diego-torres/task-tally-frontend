@@ -43,6 +43,24 @@ npm run bundle-profile:analyze
 npm run start
 ```
 
+## Authentication
+
+This project uses [Keycloak](https://www.keycloak.org/) for authentication. To develop locally:
+
+1. Start a Keycloak server and create a public OpenID Connect client with **Standard Flow** and **PKCE S256** enabled.
+2. Set the client's **Valid Redirect URIs** to `http://localhost:9000/*` and **Web Origins** to `http://localhost:9000`.
+3. Create a `.env` file based on `.env.example` with the following keys:
+
+   ```env
+   KEYCLOAK_URL=http://localhost:8080
+   KEYCLOAK_REALM=<your-realm>
+   KEYCLOAK_CLIENT_ID=<your-spa-client-id>
+   KEYCLOAK_SILENT_CHECK_PATH=/silent-check-sso.html
+   KEYCLOAK_ONLOAD=check-sso
+   ```
+
+The development server serves `public/silent-check-sso.html` at `/silent-check-sso.html` for silent SSO during startup.
+
 ## Configurations
 * [TypeScript Config](./tsconfig.json)
 * [Webpack Config](./webpack.common.js)

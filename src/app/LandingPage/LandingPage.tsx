@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Bullseye, Button, Stack, StackItem, Title } from '@patternfly/react-core';
-import { GoogleIcon } from '@patternfly/react-icons';
 import { useAuth } from '@app/utils/AuthContext';
 
 const LandingPage: React.FunctionComponent = () => {
@@ -9,17 +8,17 @@ const LandingPage: React.FunctionComponent = () => {
     <div
       className="pf-c-background-image"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        color: "#fff",
-        textAlign: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        color: '#fff',
+        textAlign: 'center',
         backgroundImage: `url(${background})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat"
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Bullseye>
@@ -35,8 +34,8 @@ const LandingPage: React.FunctionComponent = () => {
             </Title>
           </StackItem>
           <StackItem>
-            <Button icon={<GoogleIcon />} variant="primary" size="lg" onClick={login}>
-              Sign in with Google
+            <Button variant="primary" size="lg" onClick={login}>
+              Sign in
             </Button>
           </StackItem>
         </Stack>
