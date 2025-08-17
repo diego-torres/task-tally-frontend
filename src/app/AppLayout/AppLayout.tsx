@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Button,
   Masthead,
   MastheadBrand,
+  MastheadContent,
   MastheadMain,
   MastheadToggle,
   Nav,
@@ -17,6 +18,7 @@ import {
 import logo from '../../logo.png';
 import { IAppRoute, routes } from '@app/routes';
 import { BarsIcon, FolderOpenIcon, HomeIcon, KeyIcon, ListIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { useAuth } from '@app/utils/AuthContext';
 
 interface IAppLayout {
   children: React.ReactNode;
@@ -24,6 +26,12 @@ interface IAppLayout {
 
 const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   const masthead = (
     <Masthead>
       <MastheadMain>
@@ -44,6 +52,11 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
           </div>
         </MastheadBrand>
       </MastheadMain>
+      <MastheadContent>
+        <Button variant="link" onClick={handleLogout}>
+          Sign out
+        </Button>
+      </MastheadContent>
     </Masthead>
   );
 
@@ -58,8 +71,8 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
         {route.label === 'Home' && <HomeIcon style={{ marginRight: 4 }} />}
         {route.label === 'Templates' && <ListIcon style={{ marginRight: 4 }} />}
         {route.label === 'Proposals' && <FolderOpenIcon style={{ marginRight: 4 }} />}
-        {route.label === 'Git SSH keys' && <KeyIcon style={{ marginRight: 4 }} />}
-        {!['Home', 'Templates', 'Proposals', 'Git SSH keys'].includes(route.label || '') && (
+        {route.label === 'Credentials' && <KeyIcon style={{ marginRight: 4 }} />}
+        {!['Home', 'Templates', 'Proposals', 'Credentials'].includes(route.label || '') && (
           <QuestionCircleIcon style={{ marginRight: 4 }} />
         )}
         {route.label}
