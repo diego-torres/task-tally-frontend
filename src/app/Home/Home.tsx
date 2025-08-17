@@ -20,6 +20,58 @@ const Home: React.FunctionComponent = () => (
         </FlexItem>
       </Flex>
     </PageSection>
+    {/* Infographic Section */}
+    <PageSection variant="secondary">
+      <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+        <FlexItem>
+          <Title headingLevel="h2" size="lg" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            How Task Tally Works
+          </Title>
+          <Flex spaceItems={{ default: 'spaceItemsLg' }}>
+            <FlexItem>
+              <div style={{ textAlign: 'center' }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="32" fill="#E0E7FF" />
+                  <text x="32" y="38" textAnchor="middle" fontSize="24" fill="#3C3C3C">1</text>
+                </svg>
+                <Title headingLevel="h3" size="md">Define Tasks</Title>
+                <p style={{ maxWidth: '120px', margin: '0 auto' }}>List all project tasks and phases.</p>
+              </div>
+            </FlexItem>
+            <FlexItem>
+              <div style={{ textAlign: 'center' }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="32" fill="#C7F9E9" />
+                  <text x="32" y="38" textAnchor="middle" fontSize="24" fill="#3C3C3C">2</text>
+                </svg>
+                <Title headingLevel="h3" size="md">Estimate Effort</Title>
+                <p style={{ maxWidth: '120px', margin: '0 auto' }}>Use 3-point estimates to assess LOE and risk.</p>
+              </div>
+            </FlexItem>
+            <FlexItem>
+              <div style={{ textAlign: 'center' }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="32" fill="#FFD6E0" />
+                  <text x="32" y="38" textAnchor="middle" fontSize="24" fill="#3C3C3C">3</text>
+                </svg>
+                <Title headingLevel="h3" size="md">Model Teams</Title>
+                <p style={{ maxWidth: '120px', margin: '0 auto' }}>Assign consultants, teams, and skill levels.</p>
+              </div>
+            </FlexItem>
+            <FlexItem>
+              <div style={{ textAlign: 'center' }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="32" fill="#FFFACD" />
+                  <text x="32" y="38" textAnchor="middle" fontSize="24" fill="#3C3C3C">4</text>
+                </svg>
+                <Title headingLevel="h3" size="md">Analyze &amp; Adjust</Title>
+                <p style={{ maxWidth: '120px', margin: '0 auto' }}>Run scenarios, adjust scope, and optimize cost.</p>
+              </div>
+            </FlexItem>
+          </Flex>
+        </FlexItem>
+      </Flex>
+    </PageSection>
     <PageSection>
       <div>
         <Title headingLevel="h2" size="xl">
