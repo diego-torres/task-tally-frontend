@@ -1,0 +1,14 @@
+.landing-dark {
+  color: #fff;
+}
+
+.landing-dark .pf-c-title,
+.landing-dark .pf-c-stack__item,
+.landing-dark .pf-c-button {
+  color: #fff;
+}
+
+.landing-dark .pf-c-button.pf-m-primary {
+  background-color: #151515;
+  border-color: #fff;
+}

@@ -1,14 +1,28 @@
 import * as React from 'react';
 import { Bullseye, Button, Stack, StackItem, Title } from '@patternfly/react-core';
 import { GoogleIcon } from '@patternfly/react-icons';
-import pfbg from '@assets/images/PF-Backdrop.svg';
 import { useAuth } from '@app/utils/AuthContext';
 
 const LandingPage: React.FunctionComponent = () => {
   const { login } = useAuth();
   return (
-    <BackgroundImage src={pfbg}>
-      <Bullseye style={{ minHeight: '100vh' }}>
+    <div
+      className="pf-c-background-image"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        color: "#fff",
+        textAlign: "center",
+        backgroundImage: `url(${background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
+      <Bullseye>
         <Stack hasGutter>
           <StackItem>
             <Title headingLevel="h1" size="4xl">
@@ -27,8 +41,11 @@ const LandingPage: React.FunctionComponent = () => {
           </StackItem>
         </Stack>
       </Bullseye>
-    </BackgroundImage>
+    </div>
   );
 };
 
+import '../../app/app.css';
+import './landing-dark.css';
+import background from '../../background.png';
 export { LandingPage };
