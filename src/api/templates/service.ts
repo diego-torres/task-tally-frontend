@@ -2,7 +2,7 @@ import { CreateTemplateRequest, TemplateDto, UpdateTemplateRequest } from './typ
 import * as mock from './mock';
 
 // Base URL for future backend integration
-const BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+const BASE = process.env.TASK_TALLY_BACKEND || '/api';
 
 // TODO: switch to real fetch using baseUrl + OpenAPI paths
 export const listTemplates = (userId: string): Promise<TemplateDto[]> => mock.listTemplates(userId);

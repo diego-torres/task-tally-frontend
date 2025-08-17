@@ -14,6 +14,8 @@ import {
 } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
 import { CreateTemplateRequest, FilesPayload, Provider, UpdateTemplateRequest } from '@api/templates/types';
+import { listSshKeys } from '@api/credentials/service';
+import { CredentialDto } from '@api/credentials/types';
 
 type Mode = 'create' | 'edit';
 
@@ -51,6 +53,13 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ mode, initial, onSubmit, on
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const [activeKey, setActiveKey] = React.useState(0);
+  const [credentials, setCredentials] = React.useState<CredentialDto[]>([]);
+
+  React.useEffect(() => {
+    listSshKeys('me')
+      .then(setCredentials)
+      .catch(() => setCredentials([]));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +89,18 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ mode, initial, onSubmit, on
       </FormGroup>
       <FormGroup label="Default branch" fieldId="branch">
         <TextInput id="branch" value={form.defaultBranch} onChange={(_, v) => update('defaultBranch', v)} />
+      </FormGroup>
+      <FormGroup label="SSH key" fieldId="credential">
+        <FormSelect
+          id="credential"
+          value={form.credentialName || ''}
+          onChange={(_, v) => update('credentialName', v || undefined)}
+        >
+          <FormSelectOption value="" label="None" />
+          {credentials.map((c) => (
+            <FormSelectOption key={c.name} value={c.name} label={c.name || ''} />
+          ))}
+        </FormSelect>
       </FormGroup>
     </>
   );
