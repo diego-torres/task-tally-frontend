@@ -29,7 +29,7 @@ const routes: AppRouteConfig[] = [
     element: <Templates />,
     exact: true,
     label: 'Templates',
-    path: '/templates/*',
+    path: '/templates',
     title: 'Task Tally | Templates',
   },
   {

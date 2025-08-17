@@ -36,12 +36,14 @@ const TemplatesListPage: React.FC = () => {
 
   return (
     <PageSection>
-      <Button
-        variant="primary"
-        onClick={() => navigate('/templates/new')}
-      >
-        Create template
-      </Button>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <Button
+          variant="primary"
+          onClick={() => navigate('/templates/new')}
+        >
+          Create template
+        </Button>
+      </div>
       <TemplatesTable
         templates={templates}
         onView={(id) => navigate(`/templates/${id}`)}

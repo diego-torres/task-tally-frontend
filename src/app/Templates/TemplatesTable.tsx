@@ -3,6 +3,7 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
+import { EyeIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { TemplateDto } from '@api/templates/types';
 import { formatDate } from '@lib/formatters';
 
@@ -19,40 +20,42 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
   onEdit,
   onDelete,
 }) => (
-  <table className="pf-c-table pf-m-compact" role="grid">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Provider</th>
-        <th>Repo</th>
-        <th>Branch</th>
-        <th>Updated</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {templates.map((t) => (
-        <tr key={t.id}>
-          <td>{t.name}</td>
-          <td>{t.provider}</td>
-          <td>{t.sshRepoUri}</td>
-          <td>{t.defaultBranch}</td>
-          <td>{formatDate(t.updatedAt)}</td>
-          <td>
-            <Button variant={ButtonVariant.link} onClick={() => onView(t.id)}>
-              View
-            </Button>
-            <Button variant={ButtonVariant.link} onClick={() => onEdit(t.id)}>
-              Edit
-            </Button>
-            <Button variant={ButtonVariant.link} onClick={() => onDelete(t.id)}>
-              Delete
-            </Button>
-          </td>
+  <div style={{ overflowX: 'auto' }}>
+    <table className="pf-c-table pf-m-compact pf-m-grid-md" role="grid" style={{ width: '100%', minWidth: '600px' }}>
+      <thead>
+        <tr>
+          <th style={{ width: '120px' }}>Actions</th>
+          <th>Name</th>
+          <th>Provider</th>
+          <th>Repo</th>
+          <th>Branch</th>
+          <th>Updated</th>
         </tr>
-      ))}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {templates.map((t) => (
+          <tr key={t.id}>
+            <td>
+              <Button variant={ButtonVariant.link} aria-label="View" onClick={() => onView(t.id)}>
+                <EyeIcon />
+              </Button>
+              <Button variant={ButtonVariant.link} aria-label="Edit" onClick={() => onEdit(t.id)}>
+                <PencilAltIcon />
+              </Button>
+              <Button variant={ButtonVariant.link} aria-label="Delete" onClick={() => onDelete(t.id)}>
+                <TrashIcon />
+              </Button>
+            </td>
+            <td>{t.name}</td>
+            <td>{t.provider}</td>
+            <td>{t.sshRepoUri}</td>
+            <td>{t.defaultBranch}</td>
+            <td>{formatDate(t.updatedAt)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 );
 
 export default TemplatesTable;

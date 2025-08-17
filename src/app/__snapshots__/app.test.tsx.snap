@@ -204,7 +204,7 @@ exports[`App tests should render default App component 1`] = `
               <a
                 class="pf-v6-c-nav__link"
                 data-discover="true"
-                href="/templates/*"
+                href="/templates"
               >
                 Templates
               </a>

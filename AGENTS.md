@@ -1,3 +1,8 @@
+# UI Table Guidelines
+
+- Tables should be responsive: use full width, allow horizontal scrolling on small screens, and set minimum widths for columns as needed.
+- The actions column (e.g., view/edit/delete) should be placed as the first column (leftmost) in tables.
+- Use icons (PatternFly React Icons) for action buttons in tables instead of text labels. Add accessible aria-labels for each icon button.
 # Agent Guidelines
 
 ## Project structure

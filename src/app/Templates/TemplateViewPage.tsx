@@ -17,17 +17,33 @@ const TemplateViewPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [tpl, setTpl] = React.useState<TemplateDto | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     async function load() {
       if (id) {
-        const res = await getTemplate(id);
-        setTpl(res);
+        try {
+          const res = await getTemplate(id);
+          setTpl(res);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError('Unknown error');
+          }
+        }
       }
     }
     void load();
   }, [id]);
 
+  if (error) {
+    return (
+      <PageSection>
+        <div style={{ color: 'red', fontWeight: 'bold' }}>Error: {error}</div>
+      </PageSection>
+    );
+  }
   if (!tpl) {
     return (
       <PageSection>

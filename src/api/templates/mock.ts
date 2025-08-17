@@ -1,8 +1,4 @@
-import {
-  CreateTemplateRequest,
-  TemplateDto,
-  UpdateTemplateRequest,
-} from './types';
+import { CreateTemplateRequest, TemplateDto, UpdateTemplateRequest } from './types';
 
 let counter = 3;
 
@@ -33,15 +29,26 @@ const seed: TemplateDto[] = [
     version: 1,
     files: { template: { name: 'Backend' } },
   },
+  {
+    id: '3',
+    name: 'Frontend Template',
+    description: 'React frontend',
+    provider: 'github',
+    sshRepoUri: 'git@github.com:example/frontend.git',
+    defaultBranch: 'main',
+    credentialName: 'github-creds',
+    updatedAt: now(),
+    version: 1,
+    files: { template: { name: 'Frontend' } },
+  },
 ];
 
 let templates: TemplateDto[] = [...seed];
 
-const simulate = <T,>(result: T, delay = 30): Promise<T> =>
+const simulate = <T>(result: T, delay = 30): Promise<T> =>
   new Promise((resolve) => setTimeout(() => resolve(result), delay));
 
-export const listTemplates = async (): Promise<{ items: TemplateDto[] }> =>
-  simulate({ items: [...templates] });
+export const listTemplates = async (): Promise<{ items: TemplateDto[] }> => simulate({ items: [...templates] });
 
 export const getTemplate = async (id: string): Promise<TemplateDto> => {
   const t = templates.find((tpl) => tpl.id === id);
@@ -51,9 +58,7 @@ export const getTemplate = async (id: string): Promise<TemplateDto> => {
   return simulate({ ...t });
 };
 
-export const createTemplate = async (
-  req: CreateTemplateRequest,
-): Promise<TemplateDto> => {
+export const createTemplate = async (req: CreateTemplateRequest): Promise<TemplateDto> => {
   if (templates.some((t) => t.sshRepoUri === req.sshRepoUri)) {
     throw new Error('Template for repository already exists');
   }
@@ -67,10 +72,7 @@ export const createTemplate = async (
   return simulate({ ...tpl });
 };
 
-export const updateTemplate = async (
-  id: string,
-  req: UpdateTemplateRequest,
-): Promise<TemplateDto> => {
+export const updateTemplate = async (id: string, req: UpdateTemplateRequest): Promise<TemplateDto> => {
   const idx = templates.findIndex((t) => t.id === id);
   if (idx === -1) {
     throw new Error('Template not found');
