@@ -2,23 +2,15 @@
 // Keycloak-backed AuthContext: drop-in replacement for the previous GIS-based context.
 // Exports: AuthProvider, useAuth (same names & shape as before).
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Keycloak from 'keycloak-js';
 
 // ---- Environment (provided via webpack dotenv plugin) ----
-const KEYCLOAK_URL        = process.env.KEYCLOAK_URL as string;          // e.g. http://localhost:8080
-const KEYCLOAK_REALM      = process.env.KEYCLOAK_REALM as string;        // e.g. task-tally
-const KEYCLOAK_CLIENT_ID  = process.env.KEYCLOAK_CLIENT_ID as string;    // e.g. task-tally-frontend
-const SILENT_CHECK_PATH   = (process.env.KEYCLOAK_SILENT_CHECK_PATH as string) || '/silent-check-sso.html';
-const ONLOAD              = (process.env.KEYCLOAK_ONLOAD as 'check-sso' | 'login-required') || 'check-sso';
+const KEYCLOAK_URL = process.env.KEYCLOAK_URL as string; // e.g. http://localhost:8080
+const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM as string; // e.g. task-tally
+const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID as string; // e.g. task-tally-frontend
+const SILENT_CHECK_PATH = (process.env.KEYCLOAK_SILENT_CHECK_PATH as string) || '/silent-check-sso.html';
+const ONLOAD = (process.env.KEYCLOAK_ONLOAD as 'check-sso' | 'login-required') || 'check-sso';
 
 if (!KEYCLOAK_URL || !KEYCLOAK_REALM || !KEYCLOAK_CLIENT_ID) {
   // eslint-disable-next-line no-console
@@ -31,6 +23,18 @@ const keycloak = new Keycloak({
   realm: KEYCLOAK_REALM,
   clientId: KEYCLOAK_CLIENT_ID,
 });
+
+export { keycloak };
+
+interface TokenParsed extends Keycloak.KeycloakTokenParsed {
+  email?: string;
+  name?: string;
+  preferred_username?: string;
+  picture?: string;
+  sub?: string;
+  realm_access?: Keycloak.KeycloakRoles;
+  resource_access?: Record<string, Keycloak.KeycloakRoles>;
+}
 
 type AuthUser = {
   email?: string;
@@ -53,9 +57,9 @@ const AuthCtx = createContext<AuthValue | undefined>(undefined);
 
 // Map Keycloak token claims into our user shape
 function mapUser(): AuthUser {
-  const p: any = keycloak.tokenParsed || {};
-  const realmRoles = (p?.realm_access?.roles || []) as string[];
-  const resourceRoles = Object.values(p?.resource_access || {}).flatMap((r: any) => r?.roles || []) as string[];
+  const p: TokenParsed = (keycloak.tokenParsed || {}) as TokenParsed;
+  const realmRoles = p.realm_access?.roles || [];
+  const resourceRoles = Object.values(p.resource_access || {}).flatMap((r) => r.roles || []);
   return {
     email: p.email,
     name: p.name,
@@ -66,24 +70,28 @@ function mapUser(): AuthUser {
   };
 }
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [ready, setReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticated?: boolean }> = ({
+  children,
+  mockAuthenticated = false,
+}) => {
+  const [ready, setReady] = useState(mockAuthenticated);
+  const [isAuthenticated, setIsAuthenticated] = useState(mockAuthenticated);
+  const [token, setToken] = useState<string | null>(mockAuthenticated ? 'mock-token' : null);
   const refreshTimer = useRef<number | null>(null);
+  const hasConfig = KEYCLOAK_URL && KEYCLOAK_REALM && KEYCLOAK_CLIENT_ID;
 
   const startRefreshLoop = useCallback(() => {
     const schedule = () => {
       if (!keycloak.tokenParsed || !keycloak.token) return;
       const now = Math.floor(Date.now() / 1000);
-      const exp = (keycloak.tokenParsed as any).exp || now + 60;
+      const exp = keycloak.tokenParsed?.exp ?? now + 60;
       const secs = Math.max(exp - now - 30, 10); // refresh 30s before expiry (min 10s)
       refreshTimer.current = window.setTimeout(async () => {
         try {
           const refreshed = await keycloak.updateToken(30);
           if (refreshed) setToken(keycloak.token!);
         } catch (e) {
-          console.warn('[auth] token refresh failed; forcing login');
+          console.warn('[auth] token refresh failed; forcing login', e);
           keycloak.login();
         } finally {
           schedule();
@@ -101,6 +109,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
+    if (mockAuthenticated || !hasConfig) {
+      setReady(true);
+      return;
+    }
     const silentUri = `${window.location.origin}${SILENT_CHECK_PATH}`;
 
     keycloak
@@ -145,7 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return () => stopRefreshLoop();
-  }, [startRefreshLoop, stopRefreshLoop]);
+  }, [mockAuthenticated, startRefreshLoop, stopRefreshLoop, hasConfig]);
 
   const login = useCallback(() => keycloak.login(), []);
   const logout = useCallback(() => keycloak.logout({ redirectUri: window.location.origin }), []);
@@ -158,7 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       login,
       logout,
     }),
-    [isAuthenticated, token, login, logout]
+    [isAuthenticated, token, login, logout],
   );
 
   if (!ready) return <div>Loading authentication…</div>;

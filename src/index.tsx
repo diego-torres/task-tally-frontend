@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@app/index';
-import { verifyGisInit } from '@app/utils/instrumentation';
+import '@app/utils/instrumentation';
 
 if (process.env.NODE_ENV !== 'production') {
   const config = {
@@ -16,7 +16,6 @@ if (process.env.NODE_ENV !== 'production') {
   const axe = require('react-axe');
   axe(React, ReactDOM, 1000, config);
 }
-verifyGisInit(process.env.GOOGLE_CLIENT_ID || '');
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
 

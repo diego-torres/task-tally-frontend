@@ -1,17 +1,4 @@
-declare global {
-  interface Window {
-    google?: any;
-  }
-}
-
-export function verifyGisInit(clientId: string) {
-  const ready = !!window.google?.accounts?.id;
-  console.groupCollapsed('[GIS] Init check');
-  console.log('GIS script loaded?', ready);
-  console.log('Origin:', window.location.origin);
-  console.log('Client ID present?', !!clientId, clientId?.slice(0, 12) + '…');
-  console.groupEnd();
-}
+export {};
 
 const _fetch = window.fetch;
 window.fetch = async (...args) => {
