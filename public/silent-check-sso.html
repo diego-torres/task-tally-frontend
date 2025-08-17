@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <title>Silent Check SSO</title>
+  </head>
+  <body>
+    <script>
+      // Loaded in an iframe by Keycloak for silent SSO. It posts the URL back to the parent.
+      (function () {
+        try { parent.postMessage(location.href, location.origin); } catch (e) {}
+      })();
+    </script>
+  </body>
+</html>

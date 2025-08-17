@@ -15,9 +15,18 @@ module.exports = merge(common('development'), {
     port: PORT,
     historyApiFallback: true,
     open: true,
-    static: {
-      directory: path.resolve(__dirname, 'dist'),
-    },
+    static: [
+      // Serve static assets (e.g., /silent-check-sso.html) from /public at the app origin
+      {
+        directory: path.resolve(__dirname, 'public'),
+        publicPath: '/',
+        watch: true,
+      },
+      // Keep /dist as a secondary static directory if you have assets there
+      {
+        directory: path.resolve(__dirname, 'dist'),
+      },
+    ],
     client: {
       overlay: true,
     },
