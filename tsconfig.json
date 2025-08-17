@@ -19,7 +19,9 @@
     "strict": true,
     "paths": {
       "@app/*": ["src/app/*"],
-      "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
+      "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"],
+      "@api/*": ["src/api/*"],
+      "@lib/*": ["src/lib/*"]
     },
     "importHelpers": true,
     "skipLibCheck": true
