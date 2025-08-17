@@ -16,7 +16,13 @@ import {
 } from '@patternfly/react-core';
 import logo from '../../logo.png';
 import { IAppRoute, routes } from '@app/routes';
-import { BarsIcon } from '@patternfly/react-icons';
+import {
+  BarsIcon,
+  FolderOpenIcon,
+  HomeIcon,
+  ListIcon,
+  QuestionCircleIcon
+} from '@patternfly/react-icons';
 
 interface IAppLayout {
   children: React.ReactNode;
@@ -49,7 +55,13 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
 
   const renderNavItem = (route: IAppRoute, index: number) => (
     <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`} isActive={route.path === location.pathname}>
-      <NavLink to={route.path.endsWith('/*') ? route.path.replace('/*', '') : route.path}>{route.label}</NavLink>
+      <NavLink to={route.path.endsWith('/*') ? route.path.replace('/*', '') : route.path} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {route.label === 'Home' && <HomeIcon style={{ marginRight: 4 }} />}
+        {route.label === 'Templates' && <ListIcon style={{ marginRight: 4 }} />}
+        {route.label === 'Proposals' && <FolderOpenIcon style={{ marginRight: 4 }} />}
+        {!['Home', 'Templates', 'Proposals'].includes(route.label || '') && <QuestionCircleIcon style={{ marginRight: 4 }} />}
+        {route.label}
+      </NavLink>
     </NavItem>
   );
 
