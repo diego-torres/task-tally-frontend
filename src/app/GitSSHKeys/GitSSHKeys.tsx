@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Alert,
+  AlertGroup,
   Bullseye,
   Button,
   Form,
@@ -114,95 +115,101 @@ const GitSSHKeys: React.FunctionComponent = () => {
   }
 
   return (
-    <PageSection>
-      {error && <Alert variant="danger" title={error} isInline />}
-      {success && <Alert variant="success" title={success} isInline />}
-      <Toolbar style={{ marginBottom: '1rem' }}>
-        <ToolbarContent>
-          <ToolbarItem>
-            <Button variant="primary" onClick={() => setShowAdd(true)}>
-              Generate Key
+    <>
+      {success && (
+        <AlertGroup isToast isLiveRegion>
+          <Alert variant="success" title={success} timeout={3000} onTimeout={() => setSuccess(null)} />
+        </AlertGroup>
+      )}
+      <PageSection>
+        {error && <Alert variant="danger" title={error} isInline />}
+        <Toolbar style={{ marginBottom: '1rem' }}>
+          <ToolbarContent>
+            <ToolbarItem>
+              <Button variant="primary" onClick={() => setShowAdd(true)}>
+                Generate Key
+              </Button>
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button variant="danger" onClick={() => setConfirmDelete(true)} isDisabled={selected.length === 0}>
+                Delete Key
+              </Button>
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+        <SSHKeysTable
+          keys={keys}
+          selected={selected}
+          onSelect={onSelect}
+          onDelete={(name) => {
+            setSelected([name]);
+            setConfirmDelete(true);
+          }}
+          onDownload={(name) => {
+            if (username) void downloadPublicKeyAsFile(username, name);
+          }}
+        />
+        <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} style={{ maxWidth: 500 }}>
+          <ModalHeader>Generate SSH key</ModalHeader>
+          <ModalBody>
+            <Form>
+              <FormGroup label="Name" fieldId="sshkey-name" isRequired>
+                <TextInput id="sshkey-name" value={newName} onChange={(_, v) => setNewName(v)} />
+              </FormGroup>
+              <FormGroup label="Provider" fieldId="sshkey-provider" isRequired>
+                <FormSelect
+                  id="sshkey-provider"
+                  value={newProvider}
+                  onChange={(_, v) => setNewProvider(v as 'github' | 'gitlab')}
+                >
+                  <FormSelectOption value="github" label="GitHub" />
+                  <FormSelectOption value="gitlab" label="GitLab" />
+                </FormSelect>
+              </FormGroup>
+              <FormGroup label="Comment" fieldId="sshkey-comment">
+                <TextInput id="sshkey-comment" value={newComment} onChange={(_, v) => setNewComment(v)} />
+              </FormGroup>
+              <FormGroup label="Passphrase" fieldId="sshkey-passphrase">
+                <TextInput
+                  id="sshkey-passphrase"
+                  type="password"
+                  value={newPassphrase}
+                  onChange={(_, v) => setNewPassphrase(v)}
+                />
+              </FormGroup>
+              <FormGroup label="Known hosts" fieldId="sshkey-knownhosts">
+                <TextArea id="sshkey-knownhosts" value={newKnownHosts} onChange={(_, v) => setNewKnownHosts(v)} />
+                <p className="pf-c-form__helper-text">e.g. output of `ssh-keyscan github.com`</p>
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="primary" onClick={handleGenerate} isDisabled={!newName}>
+              Generate
             </Button>
-          </ToolbarItem>
-          <ToolbarItem>
-            <Button variant="danger" onClick={() => setConfirmDelete(true)} isDisabled={selected.length === 0}>
-              Delete Key
+            <Button variant="link" onClick={() => setShowAdd(false)}>
+              Cancel
             </Button>
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
-      <SSHKeysTable
-        keys={keys}
-        selected={selected}
-        onSelect={onSelect}
-        onDelete={(name) => {
-          setSelected([name]);
-          setConfirmDelete(true);
-        }}
-        onDownload={(name) => {
-          if (username) void downloadPublicKeyAsFile(username, name);
-        }}
-      />
-      <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} style={{ maxWidth: 500 }}>
-        <ModalHeader>Generate SSH key</ModalHeader>
-        <ModalBody>
-          <Form>
-            <FormGroup label="Name" fieldId="sshkey-name" isRequired>
-              <TextInput id="sshkey-name" value={newName} onChange={(_, v) => setNewName(v)} />
-            </FormGroup>
-            <FormGroup label="Provider" fieldId="sshkey-provider" isRequired>
-              <FormSelect id="sshkey-provider" value={newProvider} onChange={(_, v) => setNewProvider(v as 'github' | 'gitlab')}>
-                <FormSelectOption value="github" label="GitHub" />
-                <FormSelectOption value="gitlab" label="GitLab" />
-              </FormSelect>
-            </FormGroup>
-            <FormGroup label="Comment" fieldId="sshkey-comment">
-              <TextInput id="sshkey-comment" value={newComment} onChange={(_, v) => setNewComment(v)} />
-            </FormGroup>
-            <FormGroup label="Passphrase" fieldId="sshkey-passphrase">
-              <TextInput
-                id="sshkey-passphrase"
-                type="password"
-                value={newPassphrase}
-                onChange={(_, v) => setNewPassphrase(v)}
-              />
-            </FormGroup>
-            <FormGroup label="Known hosts" fieldId="sshkey-knownhosts">
-              <TextArea
-                id="sshkey-knownhosts"
-                value={newKnownHosts}
-                onChange={(_, v) => setNewKnownHosts(v)}
-              />
-              <p className="pf-c-form__helper-text">e.g. output of `ssh-keyscan github.com`</p>
-            </FormGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button variant="primary" onClick={handleGenerate} isDisabled={!newName}>
-            Generate
-          </Button>
-          <Button variant="link" onClick={() => setShowAdd(false)}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
-      <Modal
-        isOpen={confirmDelete}
-        onClose={() => setConfirmDelete(false)}
-        style={{ maxWidth: 350, margin: '0 auto' }}
-      >
-        <ModalHeader>Delete SSH key</ModalHeader>
-        <ModalBody>Are you sure you want to delete {selected.length} key(s)?</ModalBody>
-        <ModalFooter>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-          <Button variant="link" onClick={() => setConfirmDelete(false)}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
-    </PageSection>
+          </ModalFooter>
+        </Modal>
+        <Modal
+          isOpen={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          style={{ maxWidth: 350, margin: '0 auto' }}
+        >
+          <ModalHeader>Delete SSH key</ModalHeader>
+          <ModalBody>Are you sure you want to delete {selected.length} key(s)?</ModalBody>
+          <ModalFooter>
+            <Button variant="danger" onClick={handleDelete}>
+              Delete
+            </Button>
+            <Button variant="link" onClick={() => setConfirmDelete(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </PageSection>
+    </>
   );
 };
 
