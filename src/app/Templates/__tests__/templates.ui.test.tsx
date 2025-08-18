@@ -7,7 +7,9 @@ import { __reset as resetTemplates } from '@api/templates/mock';
 import '@testing-library/jest-dom';
 
 jest.mock('@api/credentials/service', () => ({
-  listSshKeys: jest.fn().mockResolvedValue([]),
+  useCredentialService: () => ({
+    listSshKeys: jest.fn().mockResolvedValue([]),
+  }),
 }));
 
 const renderTemplates = (initial = '/templates') =>

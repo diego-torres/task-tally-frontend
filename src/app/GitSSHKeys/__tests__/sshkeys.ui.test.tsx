@@ -11,9 +11,11 @@ jest.mock('@api/credentials/service', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mock = require('@api/credentials/mock');
   return {
-    createSshKey: mock.createSshKey,
-    deleteSshKey: mock.deleteSshKey,
-    listSshKeys: mock.listSshKeys,
+    useCredentialService: () => ({
+      createSshKey: mock.createSshKey,
+      deleteSshKey: mock.deleteSshKey,
+      listSshKeys: mock.listSshKeys,
+    }),
   };
 });
 
