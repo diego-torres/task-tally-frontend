@@ -128,6 +128,30 @@ components:
           type: string
         passphrase:
           type: string
+    SshKeyGenerateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        provider:
+          type: string
+        comment:
+          type: string
+        knownHosts:
+          type: string
+        passphrase:
+          type: string
+    SshPublicKeyResponse:
+      type: object
+      properties:
+        publicKey:
+          type: string
+        fingerprintSha256:
+          type: string
+        name:
+          type: string
+        provider:
+          type: string
     TemplateDto:
       type: object
       required:
@@ -219,6 +243,11 @@ components:
           type: string
         credentialName:
           type: string
+  securitySchemes:
+    SecurityScheme:
+      type: openIdConnect
+      openIdConnectUrl: http://localhost:8080/realms/tasktally/.well-known/openid-configuration
+      description: Authentication
 paths:
   /api/git/link:
     post:
@@ -235,11 +264,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CredentialResponse"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Link
       tags:
       - Git Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/git/ssh/validate:
     post:
       requestBody:
@@ -251,11 +287,18 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Validate
       tags:
       - Git Ssh Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/git/templates/pull:
     post:
       requestBody:
@@ -273,11 +316,18 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ProjectTemplate"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Pull Templates
       tags:
       - Git Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/git/templates/push:
     post:
       requestBody:
@@ -289,11 +339,18 @@ paths:
       responses:
         "201":
           description: Created
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Push Templates
       tags:
       - Git Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/preferences/me:
     put:
       requestBody:
@@ -309,11 +366,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PreferencesDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Update
       tags:
       - Preferences Resource
+      security:
+      - SecurityScheme:
+        - user
     get:
       responses:
         "200":
@@ -322,9 +386,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PreferencesDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       summary: Get
       tags:
       - Preferences Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/preferences/me/credentials:
     post:
       requestBody:
@@ -340,11 +411,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CredentialResponse"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Add Credential
       tags:
       - Preferences Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/preferences/me/credentials/{name}:
     delete:
       parameters:
@@ -356,9 +434,16 @@ paths:
       responses:
         "204":
           description: No Content
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       summary: Delete
       tags:
       - Preferences Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/users/{userId}/ssh-keys:
     get:
       summary: List SSH keys for user
@@ -366,10 +451,6 @@ paths:
       - name: userId
         in: path
         required: true
-        schema:
-          type: string
-      - name: X-User-Id
-        in: header
         schema:
           type: string
       responses:
@@ -381,18 +462,21 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CredentialDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       tags:
       - Ssh Keys Resource
+      security:
+      - SecurityScheme:
+        - user
     post:
       summary: Create SSH key for user
       parameters:
       - name: userId
         in: path
         required: true
-        schema:
-          type: string
-      - name: X-User-Id
-        in: header
         schema:
           type: string
       requestBody:
@@ -404,10 +488,46 @@ paths:
       responses:
         "201":
           description: Created
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       tags:
       - Ssh Keys Resource
+      security:
+      - SecurityScheme:
+        - user
+  /api/users/{userId}/ssh-keys/generate:
+    post:
+      summary: Generate SSH keypair for user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SshKeyGenerateRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+        "400":
+          description: Bad Request
+      tags:
+      - Ssh Keys Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/users/{userId}/ssh-keys/{name}:
     delete:
       summary: Delete SSH key
@@ -422,15 +542,48 @@ paths:
         required: true
         schema:
           type: string
-      - name: X-User-Id
-        in: header
-        schema:
-          type: string
       responses:
         "204":
           description: Deleted
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       tags:
       - Ssh Keys Resource
+      security:
+      - SecurityScheme:
+        - user
+  /api/users/{userId}/ssh-keys/{name}/public:
+    get:
+      summary: Get OpenSSH public key for credential
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SshPublicKeyResponse"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      tags:
+      - Ssh Keys Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/users/{userId}/templates:
     get:
       parameters:
@@ -448,9 +601,16 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/TemplateDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       summary: List
       tags:
       - Template Resource
+      security:
+      - SecurityScheme:
+        - user
     post:
       parameters:
       - name: userId
@@ -471,11 +631,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TemplateDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Create
       tags:
       - Template Resource
+      security:
+      - SecurityScheme:
+        - user
   /api/users/{userId}/templates/{id}:
     put:
       parameters:
@@ -503,11 +670,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TemplateDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
         "400":
           description: Bad Request
       summary: Update
       tags:
       - Template Resource
+      security:
+      - SecurityScheme:
+        - user
     delete:
       parameters:
       - name: id
@@ -524,9 +698,16 @@ paths:
       responses:
         "204":
           description: No Content
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
       summary: Delete
       tags:
       - Template Resource
+      security:
+      - SecurityScheme:
+        - user
 info:
   title: task-tally-backend API
   version: 1.0.0-SNAPSHOT
