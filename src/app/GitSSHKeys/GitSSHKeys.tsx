@@ -5,6 +5,8 @@ import {
   Button,
   Form,
   FormGroup,
+  FormSelect,
+  FormSelectOption,
   Modal,
   ModalBody,
   ModalFooter,
@@ -19,7 +21,7 @@ import {
 } from '@patternfly/react-core';
 import { useCredentialService } from '@api/credentials/service';
 import { useAuth } from '../utils/AuthContext';
-import { CredentialDto, SshKeyCreateRequest } from '@api/credentials/types';
+import { CredentialDto, SshKeyGenerateRequest } from '@api/credentials/types';
 import SSHKeysTable from './SSHKeysTable';
 
 const GitSSHKeys: React.FunctionComponent = () => {
@@ -30,10 +32,13 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const [success, setSuccess] = React.useState<string | null>(null);
   const [showAdd, setShowAdd] = React.useState(false);
   const [newName, setNewName] = React.useState('');
-  const [newKey, setNewKey] = React.useState('');
+  const [newProvider, setNewProvider] = React.useState<'github' | 'gitlab'>('github');
+  const [newComment, setNewComment] = React.useState('');
+  const [newPassphrase, setNewPassphrase] = React.useState('');
+  const [newKnownHosts, setNewKnownHosts] = React.useState('');
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
-  const { listSshKeys, createSshKey, deleteSshKey } = useCredentialService();
+  const { listSshKeys, generateSshKey, deleteSshKey, downloadPublicKeyAsFile } = useCredentialService();
   const { user } = useAuth();
   const username = user?.preferred_username;
 
@@ -57,15 +62,23 @@ const GitSSHKeys: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleAdd = async () => {
+  const handleGenerate = async () => {
     if (!username) return;
-    const payload: SshKeyCreateRequest = { name: newName, privateKeyPem: newKey };
+    const payload: SshKeyGenerateRequest = {
+      name: newName,
+      provider: newProvider,
+      comment: newComment || undefined,
+      passphrase: newPassphrase || undefined,
+      knownHosts: newKnownHosts || undefined,
+    };
     try {
-      await createSshKey(username, payload);
+      await generateSshKey(username, payload);
       setShowAdd(false);
       setNewName('');
-      setNewKey('');
-      setSuccess('SSH key added');
+      setNewComment('');
+      setNewPassphrase('');
+      setNewKnownHosts('');
+      setSuccess('SSH key generated');
       await refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -75,7 +88,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const handleDelete = async () => {
     try {
       for (const name of selected) {
-        await deleteSshKey('me', name);
+        await deleteSshKey(username || '', name);
       }
       setSelected([]);
       setConfirmDelete(false);
@@ -108,7 +121,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
         <ToolbarContent>
           <ToolbarItem>
             <Button variant="primary" onClick={() => setShowAdd(true)}>
-              Add Key
+              Generate Key
             </Button>
           </ToolbarItem>
           <ToolbarItem>
@@ -126,22 +139,47 @@ const GitSSHKeys: React.FunctionComponent = () => {
           setSelected([name]);
           setConfirmDelete(true);
         }}
+        onDownload={(name) => {
+          if (username) void downloadPublicKeyAsFile(username, name);
+        }}
       />
       <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} style={{ maxWidth: 500 }}>
-        <ModalHeader>Add SSH key</ModalHeader>
+        <ModalHeader>Generate SSH key</ModalHeader>
         <ModalBody>
           <Form>
-            <FormGroup label="Name" fieldId="sshkey-name">
+            <FormGroup label="Name" fieldId="sshkey-name" isRequired>
               <TextInput id="sshkey-name" value={newName} onChange={(_, v) => setNewName(v)} />
             </FormGroup>
-            <FormGroup label="Private key" fieldId="sshkey-value">
-              <TextArea id="sshkey-value" value={newKey} onChange={(_, v) => setNewKey(v)} />
+            <FormGroup label="Provider" fieldId="sshkey-provider" isRequired>
+              <FormSelect id="sshkey-provider" value={newProvider} onChange={(_, v) => setNewProvider(v as 'github' | 'gitlab')}>
+                <FormSelectOption value="github" label="GitHub" />
+                <FormSelectOption value="gitlab" label="GitLab" />
+              </FormSelect>
+            </FormGroup>
+            <FormGroup label="Comment" fieldId="sshkey-comment">
+              <TextInput id="sshkey-comment" value={newComment} onChange={(_, v) => setNewComment(v)} />
+            </FormGroup>
+            <FormGroup label="Passphrase" fieldId="sshkey-passphrase">
+              <TextInput
+                id="sshkey-passphrase"
+                type="password"
+                value={newPassphrase}
+                onChange={(_, v) => setNewPassphrase(v)}
+              />
+            </FormGroup>
+            <FormGroup label="Known hosts" fieldId="sshkey-knownhosts">
+              <TextArea
+                id="sshkey-knownhosts"
+                value={newKnownHosts}
+                onChange={(_, v) => setNewKnownHosts(v)}
+              />
+              <p className="pf-c-form__helper-text">e.g. output of `ssh-keyscan github.com`</p>
             </FormGroup>
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button variant="primary" onClick={handleAdd} isDisabled={!newName || !newKey}>
-            Add
+          <Button variant="primary" onClick={handleGenerate} isDisabled={!newName}>
+            Generate
           </Button>
           <Button variant="link" onClick={() => setShowAdd(false)}>
             Cancel
