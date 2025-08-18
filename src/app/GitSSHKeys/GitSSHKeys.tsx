@@ -18,6 +18,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { useCredentialService } from '@api/credentials/service';
+import { useAuth } from '../utils/AuthContext';
 import { CredentialDto, SshKeyCreateRequest } from '@api/credentials/types';
 import SSHKeysTable from './SSHKeysTable';
 
@@ -33,11 +34,14 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
   const { listSshKeys, createSshKey, deleteSshKey } = useCredentialService();
+  const { user } = useAuth();
+  const username = user?.preferred_username;
 
   const refresh = React.useCallback(async () => {
+    if (!username) return;
     try {
       setLoading(true);
-      const res = await listSshKeys('me');
+      const res = await listSshKeys(username);
       setKeys(res);
       setError(null);
     } catch (e) {
@@ -45,16 +49,19 @@ const GitSSHKeys: React.FunctionComponent = () => {
     } finally {
       setLoading(false);
     }
-  }, [listSshKeys]);
+  }, [listSshKeys, username]);
 
+  // Only request credentials once when the page loads
   React.useEffect(() => {
     void refresh();
-  }, [refresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAdd = async () => {
+    if (!username) return;
     const payload: SshKeyCreateRequest = { name: newName, privateKeyPem: newKey };
     try {
-      await createSshKey('me', payload);
+      await createSshKey(username, payload);
       setShowAdd(false);
       setNewName('');
       setNewKey('');
