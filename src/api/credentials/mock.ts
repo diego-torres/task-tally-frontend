@@ -1,4 +1,4 @@
-import { CredentialDto, SshKeyCreateRequest } from './types';
+import { CredentialDto, SshKeyCreateRequest, SshKeyGenerateRequest, SshPublicKeyResponse } from './types';
 
 let counter = 2;
 const now = () => new Date().toISOString();
@@ -19,6 +19,20 @@ export const createSshKey = async (userId: string, req: SshKeyCreateRequest): Pr
   keys.push(key);
   await simulate(undefined);
 };
+
+export const generateSshKey = async (userId: string, req: SshKeyGenerateRequest): Promise<void> => {
+  const key: CredentialDto = { name: req.name, provider: req.provider, fingerprint: 'FF:FF', createdAt: now() };
+  keys.push(key);
+  await simulate(undefined);
+};
+
+export const getPublicKey = async (userId: string, name: string): Promise<SshPublicKeyResponse> =>
+  simulate({
+    publicKey: `ssh-ed25519 AAAA... ${name}`,
+    fingerprintSha256: 'MOCKFPR',
+    name,
+    provider: 'github',
+  });
 
 export const deleteSshKey = async (userId: string, name: string): Promise<void> => {
   keys = keys.filter((k) => k.name !== name);

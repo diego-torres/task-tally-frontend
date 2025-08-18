@@ -12,3 +12,18 @@ export interface SshKeyCreateRequest {
   knownHosts?: string;
   passphrase?: string;
 }
+
+export interface SshKeyGenerateRequest {
+  name: string;
+  provider: 'github' | 'gitlab';
+  comment?: string;
+  knownHosts?: string;
+  passphrase?: string;
+}
+
+export interface SshPublicKeyResponse {
+  publicKey: string;
+  fingerprintSha256: string;
+  name: string;
+  provider: string;
+}

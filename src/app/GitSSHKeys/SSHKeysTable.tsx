@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, ButtonVariant, Checkbox } from '@patternfly/react-core';
-import { TrashIcon } from '@patternfly/react-icons';
+import { DownloadIcon, TrashIcon } from '@patternfly/react-icons';
 import { CredentialDto } from '@api/credentials/types';
 import { formatDate } from '@lib/formatters';
 
@@ -9,9 +9,10 @@ export interface SSHKeysTableProps {
   selected: string[];
   onSelect: (name: string, checked: boolean) => void;
   onDelete: (name: string) => void;
+  onDownload: (name: string) => void;
 }
 
-const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, onSelect, onDelete }) => (
+const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, onSelect, onDelete, onDownload }) => (
   <div style={{ overflowX: 'auto' }}>
     <table className="pf-c-table pf-m-compact pf-m-grid-md" role="grid" style={{ width: '100%', minWidth: '600px' }}>
       <thead>
@@ -27,6 +28,9 @@ const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, onSelect, o
         {keys.map((k) => (
           <tr key={k.name}>
             <td>
+              <Button variant={ButtonVariant.link} aria-label="Download public key" onClick={() => onDownload(k.name || '')}>
+                <DownloadIcon />
+              </Button>
               <Button variant={ButtonVariant.link} aria-label="Delete" onClick={() => onDelete(k.name || '')}>
                 <TrashIcon />
               </Button>
