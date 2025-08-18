@@ -5,11 +5,11 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 describe('App tests', () => {
-  test('should render landing page when unauthenticated', () => {
+  test('should render landing page when unauthenticated', async () => {
     const { asFragment } = render(<App />);
 
-    expect(screen.getByRole('heading', { name: 'Task Tally' })).toBeVisible();
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Task Tally' })).toBeVisible();
+    expect(await screen.findByRole('button', { name: /sign in/i })).toBeVisible();
     expect(asFragment()).toMatchSnapshot();
   });
 

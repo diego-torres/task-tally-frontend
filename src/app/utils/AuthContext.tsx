@@ -36,7 +36,9 @@ const AuthCtx = createContext<AuthValue | undefined>(undefined);
 function mapUser(): AuthUser {
   const p = keycloak.tokenParsed || {};
   const realmRoles: string[] = p.realm_access?.roles || [];
-  const resourceRoles: string[] = Object.values(p.resource_access || {}).flatMap((r: { roles?: string[] }) => r.roles || []);
+  const resourceRoles: string[] = Object.values(p.resource_access || {}).flatMap(
+    (r: { roles?: string[] }) => r.roles || [],
+  );
   return {
     email: p.email,
     name: p.name,
@@ -93,12 +95,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
     const silentUri = `${window.location.origin}${SILENT_CHECK_PATH}`;
 
     // Prevent double init in dev/HMR/StrictMode using a global flag
-  if (window._keycloakInitialized) {
+    if (window._keycloakInitialized) {
       setReady(true);
       setIsAuthenticated(!!keycloak.token);
       setToken(keycloak.token || null);
       return;
     }
+
+    // Mark init in progress before calling Keycloak to avoid race conditions
+    window._keycloakInitialized = true;
 
     keycloak
       .init({
@@ -109,7 +114,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
         silentCheckSsoRedirectUri: silentUri,
       })
       .then((authenticated) => {
-  window._keycloakInitialized = true;
         setIsAuthenticated(authenticated);
         setToken(keycloak.token || null);
         setReady(true);
@@ -119,6 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
       })
       .catch((err) => {
         console.error('[auth] Keycloak init error', err);
+        window._keycloakInitialized = false;
         setReady(true);
       });
 
