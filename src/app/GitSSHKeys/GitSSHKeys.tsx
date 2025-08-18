@@ -17,7 +17,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { createSshKey, deleteSshKey, listSshKeys } from '@api/credentials/service';
+import { useCredentialService } from '@api/credentials/service';
 import { CredentialDto, SshKeyCreateRequest } from '@api/credentials/types';
 import SSHKeysTable from './SSHKeysTable';
 
@@ -32,6 +32,8 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const [newKey, setNewKey] = React.useState('');
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
+  const { listSshKeys, createSshKey, deleteSshKey } = useCredentialService();
+
   const refresh = React.useCallback(async () => {
     try {
       setLoading(true);
@@ -43,7 +45,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [listSshKeys]);
 
   React.useEffect(() => {
     void refresh();

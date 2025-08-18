@@ -1,17 +1,21 @@
-import { keycloak } from '@app/utils/AuthContext';
+import { useAuth } from '@app/utils/AuthContext';
 
-export const apiFetch = async (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
-  try {
-    await keycloak.updateToken(30);
-  } catch (e) {
-    keycloak.login();
-    throw e;
-  }
 
-  const headers = new Headers(init.headers || {});
-  if (keycloak.token) {
-    headers.set('Authorization', `Bearer ${keycloak.token}`);
-  }
+// Custom hook to use apiFetch inside React components
+export function useApiFetch() {
+  const { token, login } = useAuth();
 
-  return fetch(input, { ...init, headers });
-};
+  const apiFetch = async (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
+    // Token refresh logic should be handled by AuthProvider
+    const headers = new Headers(init.headers || {});
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    } else {
+      login();
+      throw new Error('Not authenticated');
+    }
+    return fetch(input, { ...init, headers });
+  };
+
+  return apiFetch;
+}

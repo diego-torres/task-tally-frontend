@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
 import { CreateTemplateRequest, FilesPayload, Provider, UpdateTemplateRequest } from '@api/templates/types';
-import { listSshKeys } from '@api/credentials/service';
+import { useCredentialService } from '@api/credentials/service';
 import { CredentialDto } from '@api/credentials/types';
 
 type Mode = 'create' | 'edit';
@@ -55,11 +55,13 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ mode, initial, onSubmit, on
   const [activeKey, setActiveKey] = React.useState(0);
   const [credentials, setCredentials] = React.useState<CredentialDto[]>([]);
 
+  const { listSshKeys } = useCredentialService();
+
   React.useEffect(() => {
     listSshKeys('me')
       .then(setCredentials)
       .catch(() => setCredentials([]));
-  }, []);
+  }, [listSshKeys]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,40 +1,17 @@
+declare global {
+  interface Window {
+    _keycloakInitialized?: boolean;
+  }
+}
 // src/app/utils/AuthContext.tsx
 // Keycloak-backed AuthContext: drop-in replacement for the previous GIS-based context.
 // Exports: AuthProvider, useAuth (same names & shape as before).
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import Keycloak from 'keycloak-js';
+import keycloak from './keycloak';
 
-// ---- Environment (provided via webpack dotenv plugin) ----
-const KEYCLOAK_URL = process.env.KEYCLOAK_URL as string; // e.g. http://localhost:8080
-const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM as string; // e.g. task-tally
-const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID as string; // e.g. task-tally-frontend
 const SILENT_CHECK_PATH = (process.env.KEYCLOAK_SILENT_CHECK_PATH as string) || '/silent-check-sso.html';
 const ONLOAD = (process.env.KEYCLOAK_ONLOAD as 'check-sso' | 'login-required') || 'check-sso';
-
-if (!KEYCLOAK_URL || !KEYCLOAK_REALM || !KEYCLOAK_CLIENT_ID) {
-  // eslint-disable-next-line no-console
-  console.warn('[auth] Missing Keycloak env vars. Check .env: KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID');
-}
-
-// ---- Keycloak singleton ----
-const keycloak = new Keycloak({
-  url: KEYCLOAK_URL,
-  realm: KEYCLOAK_REALM,
-  clientId: KEYCLOAK_CLIENT_ID,
-});
-
-export { keycloak };
-
-interface TokenParsed extends Keycloak.KeycloakTokenParsed {
-  email?: string;
-  name?: string;
-  preferred_username?: string;
-  picture?: string;
-  sub?: string;
-  realm_access?: Keycloak.KeycloakRoles;
-  resource_access?: Record<string, Keycloak.KeycloakRoles>;
-}
 
 type AuthUser = {
   email?: string;
@@ -57,9 +34,9 @@ const AuthCtx = createContext<AuthValue | undefined>(undefined);
 
 // Map Keycloak token claims into our user shape
 function mapUser(): AuthUser {
-  const p: TokenParsed = (keycloak.tokenParsed || {}) as TokenParsed;
-  const realmRoles = p.realm_access?.roles || [];
-  const resourceRoles = Object.values(p.resource_access || {}).flatMap((r) => r.roles || []);
+  const p = keycloak.tokenParsed || {};
+  const realmRoles: string[] = p.realm_access?.roles || [];
+  const resourceRoles: string[] = Object.values(p.resource_access || {}).flatMap((r: { roles?: string[] }) => r.roles || []);
   return {
     email: p.email,
     name: p.name,
@@ -78,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
   const [isAuthenticated, setIsAuthenticated] = useState(mockAuthenticated);
   const [token, setToken] = useState<string | null>(mockAuthenticated ? 'mock-token' : null);
   const refreshTimer = useRef<number | null>(null);
-  const hasConfig = KEYCLOAK_URL && KEYCLOAK_REALM && KEYCLOAK_CLIENT_ID;
+  const hasConfig = !!keycloak;
 
   const startRefreshLoop = useCallback(() => {
     const schedule = () => {
@@ -115,6 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
     }
     const silentUri = `${window.location.origin}${SILENT_CHECK_PATH}`;
 
+    // Prevent double init in dev/HMR/StrictMode using a global flag
+  if (window._keycloakInitialized) {
+      setReady(true);
+      setIsAuthenticated(!!keycloak.token);
+      setToken(keycloak.token || null);
+      return;
+    }
+
     keycloak
       .init({
         onLoad: ONLOAD,
@@ -124,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; mockAuthenticat
         silentCheckSsoRedirectUri: silentUri,
       })
       .then((authenticated) => {
+  window._keycloakInitialized = true;
         setIsAuthenticated(authenticated);
         setToken(keycloak.token || null);
         setReady(true);
