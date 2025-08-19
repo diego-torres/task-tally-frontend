@@ -38,8 +38,9 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const [newPassphrase, setNewPassphrase] = React.useState('');
   const [newKnownHosts, setNewKnownHosts] = React.useState('');
   const [confirmDelete, setConfirmDelete] = React.useState(false);
+  const [copying, setCopying] = React.useState<string | null>(null);
 
-  const { listSshKeys, generateSshKey, deleteSshKey, downloadPublicKeyAsFile } = useCredentialService();
+  const { listSshKeys, generateSshKey, deleteSshKey, getPublicKey } = useCredentialService();
   const { user } = useAuth();
   const username = user?.preferred_username;
 
@@ -121,8 +122,12 @@ const GitSSHKeys: React.FunctionComponent = () => {
           <Alert variant="success" title={success} timeout={3000} onTimeout={() => setSuccess(null)} />
         </AlertGroup>
       )}
+      {error && (
+        <AlertGroup isToast isLiveRegion>
+          <Alert variant="danger" title={error} timeout={5000} onTimeout={() => setError(null)} />
+        </AlertGroup>
+      )}
       <PageSection>
-        {error && <Alert variant="danger" title={error} isInline />}
         <Toolbar style={{ marginBottom: '1rem' }}>
           <ToolbarContent>
             <ToolbarItem>
@@ -140,13 +145,27 @@ const GitSSHKeys: React.FunctionComponent = () => {
         <SSHKeysTable
           keys={keys}
           selected={selected}
+          copying={copying}
           onSelect={onSelect}
           onDelete={(name) => {
             setSelected([name]);
             setConfirmDelete(true);
           }}
-          onDownload={(name) => {
-            if (username) void downloadPublicKeyAsFile(username, name);
+          onCopy={async (name) => {
+            if (username) {
+              try {
+                setCopying(name);
+                const { publicKey } = await getPublicKey(username, name);
+                
+                // Copy to clipboard
+                await navigator.clipboard.writeText(publicKey);
+                setSuccess('Public key copied to clipboard');
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                setCopying(null);
+              }
+            }
           }}
         />
         <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} style={{ maxWidth: 500 }}>

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useAuth } from '@app/utils/AuthContext';
 
 
@@ -5,7 +6,7 @@ import { useAuth } from '@app/utils/AuthContext';
 export function useApiFetch() {
   const { token, login } = useAuth();
 
-  const apiFetch = async (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
+  const apiFetch = React.useCallback(async (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
     // Token refresh logic should be handled by AuthProvider
     const headers = new Headers(init.headers || {});
     if (token) {
@@ -15,7 +16,7 @@ export function useApiFetch() {
       throw new Error('Not authenticated');
     }
     return fetch(input, { ...init, headers });
-  };
+  }, [token, login]);
 
   return apiFetch;
 }

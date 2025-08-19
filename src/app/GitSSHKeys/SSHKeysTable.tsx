@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { Button, ButtonVariant, Checkbox } from '@patternfly/react-core';
-import { DownloadIcon, TrashIcon } from '@patternfly/react-icons';
+import { Button, ButtonVariant, Checkbox, Spinner } from '@patternfly/react-core';
+import { CopyIcon, TrashIcon } from '@patternfly/react-icons';
 import { CredentialDto } from '@api/credentials/types';
 import { formatDate } from '@lib/formatters';
 
 export interface SSHKeysTableProps {
   keys: CredentialDto[];
   selected: string[];
+  copying?: string | null;
   onSelect: (name: string, checked: boolean) => void;
   onDelete: (name: string) => void;
-  onDownload: (name: string) => void;
+  onCopy: (name: string) => void;
 }
 
-const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, onSelect, onDelete, onDownload }) => (
+const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, copying, onSelect, onDelete, onCopy }) => (
   <div style={{ overflowX: 'auto' }}>
     <table className="pf-c-table pf-m-compact pf-m-grid-md" role="grid" style={{ width: '100%', minWidth: '600px' }}>
       <thead>
@@ -28,9 +29,13 @@ const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, onSelect, o
         {keys.map((k) => (
           <tr key={k.name}>
             <td>
-              <Button variant={ButtonVariant.link} aria-label="Download public key" onClick={() => onDownload(k.name || '')}>
-                <DownloadIcon />
-              </Button>
+              {copying === k.name ? (
+                <Spinner size="sm" aria-label="Copying public key to clipboard" />
+              ) : (
+                <Button variant={ButtonVariant.link} aria-label="Copy public key to clipboard" onClick={() => onCopy(k.name || '')}>
+                  <CopyIcon />
+                </Button>
+              )}
               <Button variant={ButtonVariant.link} aria-label="Delete" onClick={() => onDelete(k.name || '')}>
                 <TrashIcon />
               </Button>

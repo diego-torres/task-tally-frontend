@@ -5,6 +5,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Templates } from '@app/Templates/Templates';
 import { __reset as resetTemplates } from '@api/templates/mock';
 import '@testing-library/jest-dom';
+import { AuthProvider } from '@app/utils/AuthContext';
+import keycloak from '@app/utils/keycloak';
 
 jest.mock('@api/credentials/service', () => ({
   useCredentialService: () => ({
@@ -14,15 +16,20 @@ jest.mock('@api/credentials/service', () => ({
 
 const renderTemplates = (initial = '/templates') =>
   render(
-    <MemoryRouter initialEntries={[initial]}>
-      <Routes>
-        <Route path="/templates/*" element={<Templates />} />
-      </Routes>
-    </MemoryRouter>,
+    <AuthProvider mockAuthenticated>
+      <MemoryRouter initialEntries={[initial]}>
+        <Routes>
+          <Route path="/templates/*" element={<Templates />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
   );
 
 beforeEach(() => {
   resetTemplates();
+  const kc = keycloak as unknown as { token?: string; tokenParsed?: { preferred_username: string } };
+  kc.token = 'tkn';
+  kc.tokenParsed = { preferred_username: 'me' };
 });
 
 test('list page renders seeded templates', async () => {

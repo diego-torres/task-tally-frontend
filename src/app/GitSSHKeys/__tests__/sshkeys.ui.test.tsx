@@ -17,22 +17,16 @@ jest.mock('@api/credentials/service', () => {
       generateSshKey: mock.generateSshKey,
       deleteSshKey: mock.deleteSshKey,
       listSshKeys: mock.listSshKeys,
-      downloadPublicKeyAsFile: async (userId: string, name: string) => {
-        const { publicKey } = await mock.getPublicKey(userId, name);
-        const blob = new Blob([publicKey.endsWith('\n') ? publicKey : publicKey + '\n'], {
-          type: 'text/plain;charset=utf-8',
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${name}.pub`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      },
+      getPublicKey: mock.getPublicKey,
     }),
   };
+});
+
+// Mock navigator.clipboard
+Object.assign(navigator, {
+  clipboard: {
+    writeText: jest.fn(),
+  },
 });
 
 const renderPage = () =>
@@ -68,22 +62,14 @@ test('generate key flow', async () => {
   expect(await screen.findByText('new-key')).toBeInTheDocument();
 });
 
-test('download public key', async () => {
+test('copy public key to clipboard', async () => {
   const user = userEvent.setup();
-  const createObjectURL = jest.fn(() => 'blob:mock');
-  const revokeObjectURL = jest.fn();
-  const gUrl = globalThis.URL as unknown as {
-    createObjectURL: (b: Blob) => string;
-    revokeObjectURL: (u: string) => void;
-  };
-  gUrl.createObjectURL = createObjectURL;
-  gUrl.revokeObjectURL = revokeObjectURL;
-  const clickSpy = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  const writeTextSpy = jest.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
   renderPage();
-  await user.click(await screen.findByLabelText('Download public key'));
-  await waitFor(() => expect(createObjectURL).toHaveBeenCalled());
-  expect(clickSpy).toHaveBeenCalled();
-  clickSpy.mockRestore();
+  await user.click(await screen.findByLabelText('Copy public key to clipboard'));
+  await waitFor(() => expect(writeTextSpy).toHaveBeenCalled());
+  expect(writeTextSpy).toHaveBeenCalledWith(expect.stringContaining('ssh-ed25519'));
+  writeTextSpy.mockRestore();
 });
 
 test('delete selected key', async () => {
