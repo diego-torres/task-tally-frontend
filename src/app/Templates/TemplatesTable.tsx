@@ -2,13 +2,12 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { EyeIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { TemplateDto } from '@api/templates/types';
-import { formatDate } from '@lib/formatters';
 
 export interface TemplatesTableProps {
   templates: TemplateDto[];
-  onView: (id: string) => void;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  onView: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
 const TemplatesTable: React.FC<TemplatesTableProps> = ({ templates, onView, onEdit, onDelete }) => (
@@ -19,9 +18,9 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({ templates, onView, onEd
           <th style={{ width: '120px' }}>Actions</th>
           <th>Name</th>
           <th>Provider</th>
-          <th>Repo</th>
+          <th>Repository URL</th>
           <th>Branch</th>
-          <th>Updated</th>
+          <th>SSH Key</th>
         </tr>
       </thead>
       <tbody>
@@ -40,9 +39,9 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({ templates, onView, onEd
             </td>
             <td>{t.name}</td>
             <td>{t.provider}</td>
-            <td>{t.sshRepoUri}</td>
+            <td>{t.repositoryUrl}</td>
             <td>{t.defaultBranch}</td>
-            <td>{t.updatedAt ? formatDate(t.updatedAt) : '-'}</td>
+            <td>{t.sshKeyName || '-'}</td>
           </tr>
         ))}
       </tbody>

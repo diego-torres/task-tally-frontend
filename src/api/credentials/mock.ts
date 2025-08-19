@@ -4,7 +4,15 @@ let counter = 2;
 const now = () => new Date().toISOString();
 
 const seed: CredentialDto[] = [
-  { name: 'demo-key', provider: 'github', fingerprint: 'AA:BB', createdAt: now() },
+  { 
+    name: 'demo-key', 
+    provider: 'github', 
+    scope: 'user',
+    secretRef: 'secret-ref-1',
+    knownHostsRef: 'known-hosts-ref-1',
+    passphraseRef: 'passphrase-ref-1',
+    createdAt: now() 
+  },
 ];
 
 let keys: CredentialDto[] = [...seed];
@@ -15,13 +23,29 @@ const simulate = <T>(result: T, delay = 30): Promise<T> =>
 export const listSshKeys = async (userId: string): Promise<CredentialDto[]> => simulate([...keys]);
 
 export const createSshKey = async (userId: string, req: SshKeyCreateRequest): Promise<void> => {
-  const key: CredentialDto = { name: req.name || `key-${counter++}`, fingerprint: 'FF:FF', createdAt: now() };
+  const key: CredentialDto = { 
+    name: req.name || `key-${counter++}`, 
+    provider: req.provider,
+    scope: 'user',
+    secretRef: `secret-ref-${counter}`,
+    knownHostsRef: `known-hosts-ref-${counter}`,
+    passphraseRef: `passphrase-ref-${counter}`,
+    createdAt: now() 
+  };
   keys.push(key);
   await simulate(undefined);
 };
 
 export const generateSshKey = async (userId: string, req: SshKeyGenerateRequest): Promise<void> => {
-  const key: CredentialDto = { name: req.name, provider: req.provider, fingerprint: 'FF:FF', createdAt: now() };
+  const key: CredentialDto = { 
+    name: req.name, 
+    provider: req.provider,
+    scope: 'user',
+    secretRef: `secret-ref-${counter}`,
+    knownHostsRef: `known-hosts-ref-${counter}`,
+    passphraseRef: `passphrase-ref-${counter}`,
+    createdAt: now() 
+  };
   keys.push(key);
   await simulate(undefined);
 };

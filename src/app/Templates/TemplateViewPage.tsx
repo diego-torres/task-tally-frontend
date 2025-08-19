@@ -8,14 +8,14 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { useNavigate, useParams } from '@lib/router';
-import { getTemplate } from '@api/templates/service';
-import { FilesPayload, TemplateDto } from '@api/templates/types';
-import { formatDate } from '@lib/formatters';
+import { useTemplateService } from '@api/templates/service';
+import { TemplateDto } from '@api/templates/types';
 import { Button } from '@patternfly/react-core';
 
 const TemplateViewPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { getTemplate } = useTemplateService();
   const [tpl, setTpl] = React.useState<TemplateDto | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -23,7 +23,7 @@ const TemplateViewPage: React.FC = () => {
     async function load() {
       if (id) {
         try {
-          const res = await getTemplate('me', id);
+          const res = await getTemplate('me', parseInt(id, 10));
           setTpl(res);
         } catch (err: unknown) {
           if (err instanceof Error) {
@@ -35,7 +35,7 @@ const TemplateViewPage: React.FC = () => {
       }
     }
     void load();
-  }, [id]);
+  }, [id, getTemplate]);
 
   if (error) {
     return (
@@ -52,8 +52,6 @@ const TemplateViewPage: React.FC = () => {
     );
   }
 
-  const files: FilesPayload = tpl.files || ({} as FilesPayload);
-
   return (
     <PageSection>
       <Button variant="link" onClick={() => navigate(`/templates/${tpl.id}/edit`)}>
@@ -65,32 +63,25 @@ const TemplateViewPage: React.FC = () => {
           <DescriptionListDescription>{tpl.name}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
+          <DescriptionListTerm>Description</DescriptionListTerm>
+          <DescriptionListDescription>{tpl.description || '-'}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
           <DescriptionListTerm>Provider</DescriptionListTerm>
           <DescriptionListDescription>{tpl.provider}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>Repo</DescriptionListTerm>
-          <DescriptionListDescription>{tpl.sshRepoUri}</DescriptionListDescription>
+          <DescriptionListTerm>Repository URL</DescriptionListTerm>
+          <DescriptionListDescription>{tpl.repositoryUrl}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>Updated</DescriptionListTerm>
-          <DescriptionListDescription>{tpl.updatedAt ? formatDate(tpl.updatedAt) : '-'}</DescriptionListDescription>
+          <DescriptionListTerm>Default Branch</DescriptionListTerm>
+          <DescriptionListDescription>{tpl.defaultBranch}</DescriptionListDescription>
         </DescriptionListGroup>
-        {[
-          ['Outcomes', files.outcomes?.length || 0],
-          ['Tasks', files.tasks?.length || 0],
-          ['Risks', files.risks?.length || 0],
-          ['Out of scope', files.outOfScope?.length || 0],
-          ['Prereqs', files.prereqs?.length || 0],
-          ['Training', files.training?.length || 0],
-          ['Team roles', files.teamRoles?.length || 0],
-          ['Team modeling', Array.isArray(files.teamModeling) ? files.teamModeling.length : 0],
-        ].map(([term, val]) => (
-          <DescriptionListGroup key={term as string}>
-            <DescriptionListTerm>{term}</DescriptionListTerm>
-            <DescriptionListDescription>{val as number}</DescriptionListDescription>
-          </DescriptionListGroup>
-        ))}
+        <DescriptionListGroup>
+          <DescriptionListTerm>SSH Key Name</DescriptionListTerm>
+          <DescriptionListDescription>{tpl.sshKeyName || '-'}</DescriptionListDescription>
+        </DescriptionListGroup>
       </DescriptionList>
     </PageSection>
   );

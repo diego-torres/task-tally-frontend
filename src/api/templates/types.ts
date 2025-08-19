@@ -1,38 +1,30 @@
 export type Provider = 'github' | 'gitlab';
 
 export interface TemplateDto {
-  id: string;
+  id: number;
   name: string;
   description?: string;
+  repositoryUrl: string;
   provider: Provider;
-  sshRepoUri: string;
   defaultBranch: string;
-  credentialName?: string;
-  updatedAt?: string;
-  version?: number;
-  files?: FilesPayload;
-}
-
-export interface FilesPayload {
-  template: { technologies?: string[]; description?: string };
-  outcomes?: any[];
-  tasks?: any[];
-  risks?: any[];
-  outOfScope?: any[];
-  prereqs?: any[];
-  training?: any[];
-  teamRoles?: any[];
-  teamModeling?: any;
+  sshKeyName?: string;
 }
 
 export interface CreateTemplateRequest {
   name: string;
   description?: string;
+  repositoryUrl: string;
   provider: Provider;
-  sshRepoUri: string;
   defaultBranch: string;
-  credentialName?: string;
-  files?: FilesPayload;
+  sshKeyName?: string;
 }
 
 export type UpdateTemplateRequest = CreateTemplateRequest;
+
+export interface ValidateRequest {
+  provider: string;
+  owner: string;
+  repo: string;
+  branch: string;
+  credentialName: string;
+}

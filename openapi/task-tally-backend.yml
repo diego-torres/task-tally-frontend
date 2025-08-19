@@ -2,22 +2,6 @@
 openapi: 3.1.0
 components:
   schemas:
-    Activity:
-      type: object
-      required:
-      - role
-      - task
-      properties:
-        role:
-          type: string
-          pattern: \S
-        task:
-          type: string
-          pattern: \S
-        estimateHours:
-          type: integer
-          format: int32
-          minimum: 0
     CredentialDto:
       type: object
       properties:
@@ -35,86 +19,11 @@ components:
           type: string
         createdAt:
           $ref: "#/components/schemas/Instant"
-    CredentialRequest:
-      type: object
-      required:
-      - name
-      - provider
-      - scope
-      - secretRef
-      properties:
-        name:
-          type: string
-          pattern: \S
-        provider:
-          type: string
-          pattern: \S
-        scope:
-          type: string
-          pattern: \S
-        secretRef:
-          type: string
-          pattern: \S
-        knownHostsRef:
-          type: string
-        passphraseRef:
-          type: string
-    CredentialResponse:
-      type: object
-      properties:
-        name:
-          type: string
-        provider:
-          type: string
-        scope:
-          type: string
-    GitLinkRequest:
-      type: object
-      required:
-      - name
-      - ref
-      properties:
-        name:
-          type: string
-          pattern: \S
-        ref:
-          type: string
-          pattern: \S
-        scope:
-          type: string
     Instant:
       type: string
       format: date-time
       examples:
       - 2022-03-10T16:15:50Z
-    PreferencesDto:
-      type: object
-      required:
-      - ui
-      properties:
-        ui:
-          type: object
-          additionalProperties: {}
-        defaultGitProvider:
-          type: string
-        version:
-          type: integer
-          format: int32
-    ProjectTemplate:
-      type: object
-      required:
-      - name
-      - activities
-      properties:
-        name:
-          type: string
-          pattern: \S
-        description:
-          type: string
-        activities:
-          type: array
-          items:
-            $ref: "#/components/schemas/Activity"
     SshKeyCreateRequest:
       type: object
       properties:
@@ -169,67 +78,13 @@ components:
         repositoryUrl:
           type: string
           pattern: \S
-    TemplateFile:
-      type: object
-      required:
-      - name
-      - yaml
-      properties:
-        name:
+        provider:
           type: string
-          pattern: \S
-        yaml:
+          pattern: ^(github|gitlab)$
+        defaultBranch:
           type: string
-          pattern: \S
-    TemplatePullRequest:
-      type: object
-      required:
-      - repoUri
-      - path
-      properties:
-        repoUri:
+        sshKeyName:
           type: string
-          pattern: \S
-        path:
-          type: string
-          pattern: \S
-        branch:
-          type: string
-        credentialName:
-          type: string
-    TemplatePushRequest:
-      type: object
-      required:
-      - owner
-      - repo
-      - path
-      - branch
-      - message
-      - credentialName
-      - files
-      properties:
-        owner:
-          type: string
-          pattern: \S
-        repo:
-          type: string
-          pattern: \S
-        path:
-          type: string
-          pattern: \S
-        branch:
-          type: string
-          pattern: \S
-        message:
-          type: string
-          pattern: \S
-        credentialName:
-          type: string
-          pattern: \S
-        files:
-          type: array
-          items:
-            $ref: "#/components/schemas/TemplateFile"
     ValidateRequest:
       type: object
       properties:
@@ -249,33 +104,6 @@ components:
       openIdConnectUrl: http://localhost:8080/realms/tasktally/.well-known/openid-configuration
       description: Authentication
 paths:
-  /api/git/link:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GitLinkRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CredentialResponse"
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-        "400":
-          description: Bad Request
-      summary: Link
-      tags:
-      - Git Resource
-      security:
-      - SecurityScheme:
-        - user
   /api/git/ssh/validate:
     post:
       requestBody:
@@ -296,151 +124,6 @@ paths:
       summary: Validate
       tags:
       - Git Ssh Resource
-      security:
-      - SecurityScheme:
-        - user
-  /api/git/templates/pull:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TemplatePullRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ProjectTemplate"
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-        "400":
-          description: Bad Request
-      summary: Pull Templates
-      tags:
-      - Git Resource
-      security:
-      - SecurityScheme:
-        - user
-  /api/git/templates/push:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TemplatePushRequest"
-        required: true
-      responses:
-        "201":
-          description: Created
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-        "400":
-          description: Bad Request
-      summary: Push Templates
-      tags:
-      - Git Resource
-      security:
-      - SecurityScheme:
-        - user
-  /api/preferences/me:
-    put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PreferencesDto"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PreferencesDto"
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-        "400":
-          description: Bad Request
-      summary: Update
-      tags:
-      - Preferences Resource
-      security:
-      - SecurityScheme:
-        - user
-    get:
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PreferencesDto"
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-      summary: Get
-      tags:
-      - Preferences Resource
-      security:
-      - SecurityScheme:
-        - user
-  /api/preferences/me/credentials:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CredentialRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CredentialResponse"
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-        "400":
-          description: Bad Request
-      summary: Add Credential
-      tags:
-      - Preferences Resource
-      security:
-      - SecurityScheme:
-        - user
-  /api/preferences/me/credentials/{name}:
-    delete:
-      parameters:
-      - name: name
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: No Content
-        "401":
-          description: Not Authorized
-        "403":
-          description: Not Allowed
-      summary: Delete
-      tags:
-      - Preferences Resource
       security:
       - SecurityScheme:
         - user

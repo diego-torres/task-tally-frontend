@@ -21,7 +21,7 @@ const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, copying, on
           <th style={{ width: '80px' }}>Actions</th>
           <th style={{ width: '60px' }}></th>
           <th>Name</th>
-          <th>Fingerprint</th>
+          <th>Provider</th>
           <th>Created</th>
         </tr>
       </thead>
@@ -49,7 +49,7 @@ const SSHKeysTable: React.FC<SSHKeysTableProps> = ({ keys, selected, copying, on
               />
             </td>
             <td>{k.name}</td>
-            <td>{k.fingerprint || '-'}</td>
+            <td>{k.provider || '-'}</td>
             <td>{k.createdAt ? formatDate(k.createdAt) : '-'}</td>
           </tr>
         ))}

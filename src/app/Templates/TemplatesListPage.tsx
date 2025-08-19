@@ -2,18 +2,19 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, PageSection } from '@patternfly/react-core';
 import { useNavigate } from '@lib/router';
 import TemplatesTable from './TemplatesTable';
-import { deleteTemplate, listTemplates } from '@api/templates/service';
+import { useTemplateService } from '@api/templates/service';
 import { TemplateDto } from '@api/templates/types';
 
 const TemplatesListPage: React.FC = () => {
   const navigate = useNavigate();
+  const { listTemplates, deleteTemplate } = useTemplateService();
   const [templates, setTemplates] = React.useState<TemplateDto[]>([]);
   const [toDelete, setToDelete] = React.useState<TemplateDto | null>(null);
 
   const refresh = React.useCallback(async () => {
     const res = await listTemplates('me');
     setTemplates(res);
-  }, []);
+  }, [listTemplates]);
 
   React.useEffect(() => {
     void refresh();

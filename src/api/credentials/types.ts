@@ -1,21 +1,24 @@
 export interface CredentialDto {
-  name?: string;
-  provider?: string;
-  fingerprint?: string;
-  createdAt?: string;
+  name: string;
+  provider: string;
+  scope: string;
+  secretRef: string;
+  knownHostsRef: string;
+  passphraseRef: string;
+  createdAt: string;
 }
 
 export interface SshKeyCreateRequest {
-  name?: string;
-  provider?: string;
-  privateKeyPem?: string;
-  knownHosts?: string;
-  passphrase?: string;
+  name: string;
+  provider: string;
+  privateKeyPem: string;
+  knownHosts: string;
+  passphrase: string;
 }
 
 export interface SshKeyGenerateRequest {
   name: string;
-  provider: 'github' | 'gitlab';
+  provider: string;
   comment?: string;
   knownHosts?: string;
   passphrase?: string;
