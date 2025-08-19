@@ -7,7 +7,7 @@ import { __reset as resetTemplates } from '@api/templates/mock';
 import '@testing-library/jest-dom';
 import { AuthProvider } from '@app/utils/AuthContext';
 import keycloak from '@app/utils/keycloak';
-import { CreateTemplateRequest, UpdateTemplateRequest } from '@api/templates/types';
+
 
 jest.mock('@api/credentials/service', () => ({
   useCredentialService: () => ({
@@ -15,31 +15,20 @@ jest.mock('@api/credentials/service', () => ({
   }),
 }));
 
-jest.mock('@api/templates/service', () => ({
-  useTemplateService: () => ({
-    listTemplates: jest.fn().mockImplementation(async () => {
-      const { listTemplates } = await import('@api/templates/mock');
-      return listTemplates('me');
+jest.mock('@api/templates/service', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mock = require('@api/templates/mock');
+  return {
+    useTemplateService: () => ({
+      listTemplates: mock.listTemplates,
+      getTemplate: mock.getTemplate,
+      createTemplate: mock.createTemplate,
+      updateTemplate: mock.updateTemplate,
+      deleteTemplate: mock.deleteTemplate,
+      validateGitSsh: jest.fn().mockResolvedValue(undefined),
     }),
-    getTemplate: jest.fn().mockImplementation(async (userId: string, id: number) => {
-      const { getTemplate } = await import('@api/templates/mock');
-      return getTemplate(userId, id);
-    }),
-    createTemplate: jest.fn().mockImplementation(async (userId: string, req: CreateTemplateRequest) => {
-      const { createTemplate } = await import('@api/templates/mock');
-      return createTemplate(userId, req);
-    }),
-    updateTemplate: jest.fn().mockImplementation(async (userId: string, id: number, req: UpdateTemplateRequest) => {
-      const { updateTemplate } = await import('@api/templates/mock');
-      return updateTemplate(userId, id, req);
-    }),
-    deleteTemplate: jest.fn().mockImplementation(async (userId: string, id: number) => {
-      const { deleteTemplate } = await import('@api/templates/mock');
-      return deleteTemplate(userId, id);
-    }),
-    validateGitSsh: jest.fn().mockResolvedValue(undefined),
-  }),
-}));
+  };
+});
 
 const renderTemplates = (initial = '/templates') =>
   render(
@@ -55,8 +44,8 @@ const renderTemplates = (initial = '/templates') =>
 beforeEach(() => {
   resetTemplates();
   const kc = keycloak as unknown as { token?: string; tokenParsed?: { preferred_username: string } };
-  kc.token = 'tkn';
-  kc.tokenParsed = { preferred_username: 'me' };
+  kc.token = 'mock-token';
+  kc.tokenParsed = { preferred_username: 'testuser' };
 });
 
 test('list page renders seeded templates', async () => {

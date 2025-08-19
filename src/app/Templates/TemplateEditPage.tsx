@@ -3,29 +3,36 @@ import { PageSection, Spinner } from '@patternfly/react-core';
 import { useNavigate, useParams } from '@lib/router';
 import TemplateForm from './TemplateForm';
 import { useTemplateService } from '@api/templates/service';
-import { CreateTemplateRequest } from '@api/templates/types';
+import { UpdateTemplateRequest } from '@api/templates/types';
+import { useAuth } from '@app/utils/AuthContext';
 
 const TemplateEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { getTemplate, updateTemplate } = useTemplateService();
-  const [initial, setInitial] = React.useState<CreateTemplateRequest | null>(null);
+  const { user } = useAuth();
+  const username = user?.preferred_username;
+  const [initial, setInitial] = React.useState<UpdateTemplateRequest | null>(null);
+
 
   React.useEffect(() => {
-    async function load() {
-      if (id) {
-        const tpl = await getTemplate('me', parseInt(id, 10));
-        setInitial({ ...tpl });
+    const loadTemplate = async () => {
+      if (!username || !id) return;
+      try {
+        const tpl = await getTemplate(username, parseInt(id, 10));
+        setInitial(tpl);
+      } catch (err) {
+        console.error('Failed to load template:', err);
       }
-    }
-    void load();
-  }, [id, getTemplate]);
+    };
 
-  const onSubmit = async (value: CreateTemplateRequest) => {
-    if (id) {
-      await updateTemplate('me', parseInt(id, 10), value);
-      navigate(`/templates/${id}`);
-    }
+    void loadTemplate();
+  }, [getTemplate, id, username]);
+
+  const handleSubmit = async (value: UpdateTemplateRequest) => {
+    if (!username || !id) return;
+    await updateTemplate(username, parseInt(id, 10), value);
+    navigate('/templates');
   };
 
   if (!initial) {
@@ -37,7 +44,7 @@ const TemplateEditPage: React.FC = () => {
   }
 
   return (
-    <TemplateForm mode="edit" initial={initial} onSubmit={onSubmit} onCancel={() => navigate(`/templates/${id}`)} />
+    <TemplateForm mode="edit" initial={initial} onSubmit={handleSubmit} onCancel={() => navigate(`/templates/${id}`)} />
   );
 };
 

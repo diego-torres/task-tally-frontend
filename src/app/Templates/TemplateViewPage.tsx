@@ -1,5 +1,9 @@
 import * as React from 'react';
 import {
+  Alert,
+  AlertActionCloseButton,
+  Bullseye,
+  Button,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -10,44 +14,67 @@ import {
 import { useNavigate, useParams } from '@lib/router';
 import { useTemplateService } from '@api/templates/service';
 import { TemplateDto } from '@api/templates/types';
-import { Button } from '@patternfly/react-core';
+
+import { useAuth } from '@app/utils/AuthContext';
 
 const TemplateViewPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { getTemplate } = useTemplateService();
+  const { user } = useAuth();
+  const username = user?.preferred_username;
   const [tpl, setTpl] = React.useState<TemplateDto | null>(null);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    async function load() {
-      if (id) {
-        try {
-          const res = await getTemplate('me', parseInt(id, 10));
-          setTpl(res);
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            setError(err.message);
-          } else {
-            setError('Unknown error');
-          }
-        }
+    const loadTemplate = async () => {
+      if (!username || !id) return;
+      try {
+        setLoading(true);
+        const res = await getTemplate(username, parseInt(id, 10));
+        setTpl(res);
+      } catch (err) {
+        console.error('Failed to load template:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load template');
+      } finally {
+        setLoading(false);
       }
-    }
-    void load();
-  }, [id, getTemplate]);
+    };
+
+    void loadTemplate();
+  }, [getTemplate, id, username]);
 
   if (error) {
     return (
       <PageSection>
-        <div style={{ color: 'red', fontWeight: 'bold' }}>Error: {error}</div>
+                 <Bullseye>
+           <Alert
+             variant="danger"
+             title="Error loading template"
+             actionClose={<AlertActionCloseButton onClose={() => setError(null)} />}
+           >
+             {error}
+           </Alert>
+         </Bullseye>
+      </PageSection>
+    );
+  }
+  if (loading) {
+    return (
+      <PageSection>
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
       </PageSection>
     );
   }
   if (!tpl) {
     return (
       <PageSection>
-        <Spinner />
+        <Bullseye>
+          <Alert variant="info" title="Template not found" />
+        </Bullseye>
       </PageSection>
     );
   }

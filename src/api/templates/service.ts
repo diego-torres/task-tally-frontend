@@ -11,64 +11,154 @@ export function useTemplateService() {
 
   const service = React.useMemo(() => {
     const listTemplates = async (userId: string): Promise<TemplateDto[]> => {
-      const res = await apiFetch(`${BASE}/users/${userId}/templates`);
-      if (!res.ok) {
+      try {
+        const res = await apiFetch(`${BASE}/users/${userId}/templates`);
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Authentication required. Please log in again.');
+          } else if (res.status === 403) {
+            throw new Error('You do not have permission to access templates.');
+          } else if (res.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+          } else {
+            throw new Error(`Failed to fetch templates (${res.status})`);
+          }
+        }
+        return res.json();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
         throw new Error('Failed to fetch templates');
       }
-      return res.json();
     };
 
     const getTemplate = async (userId: string, id: number): Promise<TemplateDto> => {
       // Note: The OpenAPI spec doesn't show a GET endpoint for individual templates
       // This might need to be implemented on the backend or we can filter from the list
-      const templates = await listTemplates(userId);
-      const template = templates.find(t => t.id === id);
-      if (!template) {
-        throw new Error(`Template with id ${id} not found`);
+      try {
+        const templates = await listTemplates(userId);
+        const template = templates.find(t => t.id === id);
+        if (!template) {
+          throw new Error(`Template with id ${id} not found`);
+        }
+        return template;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(`Failed to get template ${id}`);
       }
-      return template;
     };
 
     const createTemplate = async (userId: string, req: CreateTemplateRequest): Promise<TemplateDto> => {
-      const res = await apiFetch(`${BASE}/users/${userId}/templates`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req),
-      });
-      if (!res.ok) {
+      try {
+        const res = await apiFetch(`${BASE}/users/${userId}/templates`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(req),
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Authentication required. Please log in again.');
+          } else if (res.status === 403) {
+            throw new Error('You do not have permission to create templates.');
+          } else if (res.status === 400) {
+            throw new Error('Invalid template data. Please check your input.');
+          } else if (res.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+          } else {
+            throw new Error(`Failed to create template (${res.status})`);
+          }
+        }
+        return res.json();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
         throw new Error('Failed to create template');
       }
-      return res.json();
     };
 
     const updateTemplate = async (userId: string, id: number, req: UpdateTemplateRequest): Promise<TemplateDto> => {
-      const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req),
-      });
-      if (!res.ok) {
+      try {
+        const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(req),
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Authentication required. Please log in again.');
+          } else if (res.status === 403) {
+            throw new Error('You do not have permission to update this template.');
+          } else if (res.status === 404) {
+            throw new Error(`Template with id ${id} not found`);
+          } else if (res.status === 400) {
+            throw new Error('Invalid template data. Please check your input.');
+          } else if (res.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+          } else {
+            throw new Error(`Failed to update template (${res.status})`);
+          }
+        }
+        return res.json();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
         throw new Error('Failed to update template');
       }
-      return res.json();
     };
 
     const deleteTemplate = async (userId: string, id: number): Promise<void> => {
-      const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) {
+      try {
+        const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
+          method: 'DELETE',
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Authentication required. Please log in again.');
+          } else if (res.status === 403) {
+            throw new Error('You do not have permission to delete this template.');
+          } else if (res.status === 404) {
+            throw new Error(`Template with id ${id} not found`);
+          } else if (res.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+          } else {
+            throw new Error(`Failed to delete template (${res.status})`);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
         throw new Error('Failed to delete template');
       }
     };
 
     const validateGitSsh = async (req: ValidateRequest): Promise<void> => {
-      const res = await apiFetch(`${BASE}/git/ssh/validate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req),
-      });
-      if (!res.ok) {
+      try {
+        const res = await apiFetch(`${BASE}/git/ssh/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(req),
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Authentication required. Please log in again.');
+          } else if (res.status === 400) {
+            throw new Error('Invalid SSH configuration. Please check your settings.');
+          } else if (res.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+          } else {
+            throw new Error(`Failed to validate Git SSH connection (${res.status})`);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
         throw new Error('Failed to validate Git SSH connection');
       }
     };
