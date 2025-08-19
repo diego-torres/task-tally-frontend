@@ -12,7 +12,7 @@ export function useTemplateService() {
   const service = React.useMemo(() => {
     const listTemplates = async (userId: string): Promise<TemplateDto[]> => {
       try {
-        const res = await apiFetch(`${BASE}/users/${userId}/templates`);
+        const res = await apiFetch(`${BASE}/api/users/${userId}/templates`);
         if (!res.ok) {
           if (res.status === 401) {
             throw new Error('Authentication required. Please log in again.');
@@ -53,7 +53,7 @@ export function useTemplateService() {
 
     const createTemplate = async (userId: string, req: CreateTemplateRequest): Promise<TemplateDto> => {
       try {
-        const res = await apiFetch(`${BASE}/users/${userId}/templates`, {
+        const res = await apiFetch(`${BASE}/api/users/${userId}/templates`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(req),
@@ -82,7 +82,7 @@ export function useTemplateService() {
 
     const updateTemplate = async (userId: string, id: number, req: UpdateTemplateRequest): Promise<TemplateDto> => {
       try {
-        const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
+        const res = await apiFetch(`${BASE}/api/users/${userId}/templates/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(req),
@@ -113,7 +113,7 @@ export function useTemplateService() {
 
     const deleteTemplate = async (userId: string, id: number): Promise<void> => {
       try {
-        const res = await apiFetch(`${BASE}/users/${userId}/templates/${id}`, {
+        const res = await apiFetch(`${BASE}/api/users/${userId}/templates/${id}`, {
           method: 'DELETE',
         });
         if (!res.ok) {

@@ -61,7 +61,8 @@ test('create flow adds template and returns to list', async () => {
   await user.type(name, 'New Template');
   await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:foo/bar.git');
   await user.click(screen.getByRole('button', { name: /create/i }));
-  expect(await screen.findByText('New Template')).toBeInTheDocument();
+  // Look for the template name in the table, not the button
+  expect(await screen.findByText('New Template', { selector: 'td' })).toBeInTheDocument();
 });
 
 test('edit flow updates name and navigates to view', async () => {
@@ -79,4 +80,29 @@ test('name input is visible and enabled', async () => {
   const input = await screen.findByLabelText(/name/i);
   expect(input).toBeVisible();
   expect(input).toBeEnabled();
+});
+
+test('shows error alert when template creation fails due to duplicate repository', async () => {
+  const user = userEvent.setup();
+  
+  // First, create a template with the same repository URL to trigger the duplicate error
+  renderTemplates('/templates/new');
+  const name = await screen.findByLabelText(/name/i);
+  await user.type(name, 'First Template');
+  await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:test/repo.git');
+  await user.click(screen.getByRole('button', { name: /create/i }));
+  
+  // Wait for navigation back to list
+  await screen.findByText('First Template', { selector: 'td' });
+  
+  // Now try to create another template with the same repository URL
+  await user.click(screen.getByRole('button', { name: 'New Template' }));
+  const newName = await screen.findByLabelText(/name/i);
+  await user.type(newName, 'Second Template');
+  await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:test/repo.git');
+  await user.click(screen.getByRole('button', { name: /create/i }));
+  
+  // Should show error alert
+  expect(await screen.findByText('Error creating template')).toBeInTheDocument();
+  expect(await screen.findByText('Template for repository already exists')).toBeInTheDocument();
 });

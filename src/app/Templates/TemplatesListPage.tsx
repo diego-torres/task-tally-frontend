@@ -71,11 +71,13 @@ const TemplatesListPage: React.FC = () => {
         </Alert>
       )}
       
-      <div style={{ marginBottom: '1.5rem' }}>
-        <Button variant="primary" onClick={() => navigate('/templates/new')}>
-          New Template
-        </Button>
-      </div>
+      {!loading && !error && templates.length > 0 && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <Button variant="primary" onClick={() => navigate('/templates/new')}>
+            New Template
+          </Button>
+        </div>
+      )}
       
       {loading ? (
         <div style={{ textAlign: 'center', padding: '2rem' }}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PageSection, Spinner } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, PageSection, Spinner } from '@patternfly/react-core';
 import { useNavigate, useParams } from '@lib/router';
 import TemplateForm from './TemplateForm';
 import { useTemplateService } from '@api/templates/service';
@@ -13,16 +13,18 @@ const TemplateEditPage: React.FC = () => {
   const { user } = useAuth();
   const username = user?.preferred_username;
   const [initial, setInitial] = React.useState<UpdateTemplateRequest | null>(null);
-
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const loadTemplate = async () => {
       if (!username || !id) return;
       try {
+        setError(null);
         const tpl = await getTemplate(username, parseInt(id, 10));
         setInitial(tpl);
       } catch (err) {
         console.error('Failed to load template:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load template');
       }
     };
 
@@ -31,9 +33,29 @@ const TemplateEditPage: React.FC = () => {
 
   const handleSubmit = async (value: UpdateTemplateRequest) => {
     if (!username || !id) return;
-    await updateTemplate(username, parseInt(id, 10), value);
-    navigate('/templates');
+    try {
+      setError(null);
+      await updateTemplate(username, parseInt(id, 10), value);
+      navigate('/templates');
+    } catch (err) {
+      console.error('Failed to update template:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update template');
+    }
   };
+
+  if (error) {
+    return (
+      <PageSection>
+        <Alert
+          variant="danger"
+          title="Error"
+          actionClose={<AlertActionCloseButton onClose={() => setError(null)} />}
+        >
+          {error}
+        </Alert>
+      </PageSection>
+    );
+  }
 
   if (!initial) {
     return (

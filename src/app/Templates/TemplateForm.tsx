@@ -9,6 +9,7 @@ import {
   PageSection,
   TextArea,
   TextInput,
+  Tooltip,
 } from '@patternfly/react-core';
 import { CreateTemplateRequest, Provider, UpdateTemplateRequest } from '@api/templates/types';
 import { useCredentialService } from '@api/credentials/service';
@@ -71,7 +72,12 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ mode, initial, onSubmit, on
           </FormSelect>
         </FormGroup>
         <FormGroup label="Repository URL" isRequired fieldId="repo">
-          <TextInput id="repo" value={form.repositoryUrl} onChange={(_, v) => update('repositoryUrl', v)} isRequired />
+          <Tooltip
+            content="Use SSH format: git@github.com:username/repository.git or git@gitlab.com:username/repository.git"
+            position="top"
+          >
+            <TextInput id="repo" value={form.repositoryUrl} onChange={(_, v) => update('repositoryUrl', v)} isRequired />
+          </Tooltip>
         </FormGroup>
         <FormGroup label="Default branch" fieldId="branch">
           <TextInput id="branch" value={form.defaultBranch} onChange={(_, v) => update('defaultBranch', v)} />
