@@ -1,0 +1,84 @@
+# UI Table Guidelines
+
+- Tables should be responsive: use full width, allow horizontal scrolling on small screens, and set minimum widths for columns as needed.
+- The actions column (e.g., view/edit/delete) should be placed as the first column (leftmost) in tables.
+- Use icons (PatternFly React Icons) for action buttons in tables instead of text labels. Add accessible aria-labels for each icon button.
+
+# Agent Guidelines
+
+## Project structure
+- Written in TypeScript and React using the PatternFly React Seed layout.
+- Source lives in `src/`; tests reside next to components using Jest and Testing Library.
+
+## Preferred libraries
+- Use existing dependencies from `package.json` (PatternFly React, Jest, Testing Library, ESLint, Prettier, etc.).
+- Avoid adding new dependencies unless absolutely necessary and no existing library covers the use case.
+
+## Development workflow
+- Install dependencies with `npm install` if needed.
+- Start the development server with `npm run start:dev`.
+- Build for production using `npm run build`.
+
+## Code quality and formatting
+- Lint with `npm run lint`.
+- Format with `npm run format`.
+- Type-check with `npm run type-check`.
+
+## Testing
+- sync the snapshots with `npm test -- -u`
+- Run unit tests via `npm test`.
+- For coverage and CI-style checks use `npm run ci-checks`.
+
+## Pull requests
+- Ensure lint, tests, and type checks pass before committing.
+- Prefer using built-in PatternFly components and utilities to minimize extra libraries.
+
+## Project-specific conventions
+
+### Authentication & Authorization
+- This project uses Keycloak for authentication (keycloak-js dependency).
+- Authentication context is managed in `src/app/utils/AuthContext.tsx`.
+- Use the AuthContext for user authentication state and login/logout functionality.
+
+### API Integration
+- API services are organized in `src/api/` directory with separate folders for different domains.
+- Each API domain has its own `service.ts`, `types.ts`, and `mock.ts` files.
+- Use the OpenAPI specification in `openapi/task-tally-backend.yml` for API contract understanding.
+- Follow the existing pattern of separating service logic, types, and mock data.
+
+### Routing & Navigation
+- Routes are defined in `src/app/routes.tsx` with the `IAppRoute` interface.
+- Use React Router v7 for navigation (react-router-dom dependency).
+- The app uses a layout-based routing structure with nested routes (e.g., `/templates/*`).
+- Navigation labels are used for the sidebar menu in AppLayout.
+
+### Component Structure
+- Components are organized in feature-based folders under `src/app/`.
+- Each feature folder should contain the main component and related sub-components.
+- Tests should be placed in `__tests__/` folders next to the components they test.
+- Use the existing naming convention: PascalCase for components, camelCase for files.
+
+### State Management
+- Use React hooks for local component state.
+- For shared state, prefer React Context over external state management libraries.
+- Follow the existing pattern of using custom hooks for reusable logic.
+
+### Styling
+- Use PatternFly React components and styling system.
+- Custom CSS should be minimal and follow PatternFly design principles.
+- Use `@patternfly/react-styles` for conditional styling when needed.
+
+### Error Handling
+- Implement proper error boundaries for React components.
+- Use try-catch blocks for API calls and provide user-friendly error messages.
+- Follow the existing error handling patterns in the codebase.
+
+### Accessibility
+- Ensure all interactive elements have proper ARIA labels.
+- Use semantic HTML elements and PatternFly's accessibility features.
+- Test with screen readers and keyboard navigation.
+
+### Performance
+- Use React.memo for expensive components when appropriate.
+- Implement proper loading states for async operations.
+- Follow the existing lazy loading patterns for routes if implemented.
