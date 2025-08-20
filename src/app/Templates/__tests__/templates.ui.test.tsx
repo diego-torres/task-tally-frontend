@@ -59,7 +59,7 @@ test('create flow adds template and returns to list', async () => {
   renderTemplates('/templates/new');
   const name = await screen.findByLabelText(/name/i);
   await user.type(name, 'New Template');
-  await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:foo/bar.git');
+  await user.type(screen.getByRole('textbox', { name: /repository url/i }), 'git@github.com:foo/bar.git');
   await user.click(screen.getByRole('button', { name: /create/i }));
   // Look for the template name in the table, not the button
   expect(await screen.findByText('New Template', { selector: 'td' })).toBeInTheDocument();
@@ -89,7 +89,7 @@ test('shows error alert when template creation fails due to duplicate repository
   renderTemplates('/templates/new');
   const name = await screen.findByLabelText(/name/i);
   await user.type(name, 'First Template');
-  await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:test/repo.git');
+  await user.type(screen.getByRole('textbox', { name: /repository url/i }), 'git@github.com:test/repo.git');
   await user.click(screen.getByRole('button', { name: /create/i }));
   
   // Wait for navigation back to list
@@ -99,7 +99,7 @@ test('shows error alert when template creation fails due to duplicate repository
   await user.click(screen.getByRole('button', { name: 'New Template' }));
   const newName = await screen.findByLabelText(/name/i);
   await user.type(newName, 'Second Template');
-  await user.type(screen.getByLabelText(/repository url/i), 'git@github.com:test/repo.git');
+  await user.type(screen.getByRole('textbox', { name: /repository url/i }), 'git@github.com:test/repo.git');
   await user.click(screen.getByRole('button', { name: /create/i }));
   
   // Should show error alert
