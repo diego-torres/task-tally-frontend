@@ -57,7 +57,7 @@ test('generate key flow', async () => {
   renderPage();
   await user.click(await screen.findByRole('button', { name: /generate key/i }));
   const modal = await screen.findByRole('dialog');
-  await user.type(within(modal).getByLabelText(/name/i), 'new-key');
+  await user.type(within(modal).getByTestId('sshkey-name'), 'new-key');
   await user.click(within(modal).getByRole('button', { name: /^generate$/i }));
   expect(await screen.findByText('new-key')).toBeInTheDocument();
 });

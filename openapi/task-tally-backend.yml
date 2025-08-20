@@ -19,11 +19,34 @@ components:
           type: string
         createdAt:
           $ref: "#/components/schemas/Instant"
+    HostKeyResponse:
+      type: object
+      properties:
+        hostname:
+          type: string
+          description: The hostname that was queried
+        hostKeys:
+          type: array
+          items:
+            type: string
+          description: List of SSH host key entries
+        knownHosts:
+          type: string
+          description: Known hosts content in standard format
     Instant:
       type: string
       format: date-time
       examples:
       - 2022-03-10T16:15:50Z
+    SshAvailabilityResponse:
+      type: object
+      properties:
+        hostname:
+          type: string
+          description: The hostname that was checked
+        sshAvailable:
+          type: boolean
+          description: Whether SSH service is available on port 22
     SshKeyCreateRequest:
       type: object
       properties:
@@ -37,6 +60,8 @@ components:
           type: string
         passphrase:
           type: string
+        hostname:
+          type: string
     SshKeyGenerateRequest:
       type: object
       properties:
@@ -49,6 +74,8 @@ components:
         knownHosts:
           type: string
         passphrase:
+          type: string
+        hostname:
           type: string
     SshPublicKeyResponse:
       type: object
@@ -127,6 +154,50 @@ paths:
       security:
       - SecurityScheme:
         - user
+  /api/ssh/host-keys/{hostname}:
+    get:
+      summary: Fetch SSH host keys from a remote server
+      description: "Fetches SSH host keys from the specified hostname, similar to\
+        \ ssh-keyscan"
+      tags:
+      - SSH Host Keys
+      parameters:
+      - name: hostname
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Host keys fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HostKeyResponse"
+        "400":
+          description: Invalid hostname
+        "500":
+          description: Failed to fetch host keys
+  /api/ssh/host-keys/{hostname}/check:
+    get:
+      summary: Check if SSH service is available on a host
+      description: Checks if the specified hostname has SSH service available on port
+        22
+      tags:
+      - SSH Host Keys
+      parameters:
+      - name: hostname
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: SSH service availability checked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SshAvailabilityResponse"
   /api/users/{userId}/ssh-keys:
     get:
       summary: List SSH keys for user
@@ -391,6 +462,9 @@ paths:
       security:
       - SecurityScheme:
         - user
+tags:
+- name: SSH Host Keys
+  description: SSH host key management operations
 info:
   title: task-tally-backend API
   version: 1.0.0-SNAPSHOT

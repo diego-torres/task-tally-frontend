@@ -37,6 +37,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
   const [newComment, setNewComment] = React.useState('');
   const [newPassphrase, setNewPassphrase] = React.useState('');
   const [newKnownHosts, setNewKnownHosts] = React.useState('');
+  const [newHostname, setNewHostname] = React.useState('');
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [copying, setCopying] = React.useState<string | null>(null);
 
@@ -72,6 +73,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
       comment: newComment || undefined,
       passphrase: newPassphrase || undefined,
       knownHosts: newKnownHosts || undefined,
+      hostname: newHostname || undefined,
     };
     try {
       await generateSshKey(username, payload);
@@ -80,6 +82,7 @@ const GitSSHKeys: React.FunctionComponent = () => {
       setNewComment('');
       setNewPassphrase('');
       setNewKnownHosts('');
+      setNewHostname('');
       setSuccess('SSH key generated');
       await refresh();
     } catch (e) {
@@ -173,7 +176,12 @@ const GitSSHKeys: React.FunctionComponent = () => {
           <ModalBody>
             <Form>
               <FormGroup label="Name" fieldId="sshkey-name" isRequired>
-                <TextInput id="sshkey-name" value={newName} onChange={(_, v) => setNewName(v)} />
+                <TextInput 
+                  id="sshkey-name" 
+                  value={newName} 
+                  onChange={(_, v) => setNewName(v)} 
+                  data-testid="sshkey-name"
+                />
               </FormGroup>
               <FormGroup label="Provider" fieldId="sshkey-provider" isRequired>
                 <FormSelect
@@ -196,9 +204,18 @@ const GitSSHKeys: React.FunctionComponent = () => {
                   onChange={(_, v) => setNewPassphrase(v)}
                 />
               </FormGroup>
+              <FormGroup label="Hostname" fieldId="sshkey-hostname">
+                <TextInput 
+                  id="sshkey-hostname" 
+                  value={newHostname} 
+                  onChange={(_, v) => setNewHostname(v)}
+                  placeholder="e.g. github.com, gitlab.com"
+                />
+                <p className="pf-c-form__helper-text">Specify the hostname to automatically fetch known_hosts. Leave empty if you want to provide known_hosts manually.</p>
+              </FormGroup>
               <FormGroup label="Known hosts" fieldId="sshkey-knownhosts">
                 <TextArea id="sshkey-knownhosts" value={newKnownHosts} onChange={(_, v) => setNewKnownHosts(v)} />
-                <p className="pf-c-form__helper-text">e.g. output of `ssh-keyscan github.com`</p>
+                <p className="pf-c-form__helper-text">e.g. output of `ssh-keyscan github.com`. Leave empty if you specified a hostname above.</p>
               </FormGroup>
             </Form>
           </ModalBody>

@@ -11,6 +11,7 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { CreateTemplateRequest, Provider, UpdateTemplateRequest } from '@api/templates/types';
 import { useCredentialService } from '@api/credentials/service';
 import { CredentialDto } from '@api/credentials/types';
@@ -71,13 +72,28 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ mode, initial, onSubmit, on
             <FormSelectOption value="gitlab" label="GitLab" />
           </FormSelect>
         </FormGroup>
-        <FormGroup label="Repository URL" isRequired fieldId="repo">
-          <Tooltip
-            content="Use SSH format: git@github.com:username/repository.git or git@gitlab.com:username/repository.git"
-            position="top"
-          >
-            <TextInput id="repo" value={form.repositoryUrl} onChange={(_, v) => update('repositoryUrl', v)} isRequired />
-          </Tooltip>
+        <FormGroup 
+          label={
+            <span>
+              Repository URL
+              <Tooltip
+                content="Use SSH format: git@github.com:username/repository.git or git@gitlab.com:username/repository.git"
+                position="top"
+              >
+                <Button
+                  variant="plain"
+                  aria-label="Repository URL help"
+                  style={{ marginLeft: '8px', padding: '0' }}
+                >
+                  <QuestionCircleIcon />
+                </Button>
+              </Tooltip>
+            </span>
+          } 
+          isRequired 
+          fieldId="repo"
+        >
+          <TextInput id="repo" value={form.repositoryUrl} onChange={(_, v) => update('repositoryUrl', v)} isRequired />
         </FormGroup>
         <FormGroup label="Default branch" fieldId="branch">
           <TextInput id="branch" value={form.defaultBranch} onChange={(_, v) => update('defaultBranch', v)} />

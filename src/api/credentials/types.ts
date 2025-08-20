@@ -12,8 +12,9 @@ export interface SshKeyCreateRequest {
   name: string;
   provider: string;
   privateKeyPem: string;
-  knownHosts: string;
-  passphrase: string;
+  knownHosts?: string;
+  passphrase?: string;
+  hostname?: string;
 }
 
 export interface SshKeyGenerateRequest {
@@ -22,6 +23,7 @@ export interface SshKeyGenerateRequest {
   comment?: string;
   knownHosts?: string;
   passphrase?: string;
+  hostname?: string;
 }
 
 export interface SshPublicKeyResponse {
