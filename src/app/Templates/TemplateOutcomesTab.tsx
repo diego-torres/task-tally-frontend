@@ -94,7 +94,8 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
       
       if (storedOutcomes && storedOutcomes.length > 0) {
         // If we have stored data, use it and mark as having unsaved changes
-        setOutcomes(storedOutcomes);
+        const storedWithFlags = storedOutcomes.map(o => ({ ...o, isEditing: true }));
+        setOutcomes(storedWithFlags);
         setHasUnsavedChanges(true);
         setLoading(false);
         return;
@@ -102,7 +103,7 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
       
       // Otherwise load from API
       const loadedOutcomes = await templateService.listOutcomes(user.preferred_username, templateId);
-      const outcomesWithFlags = loadedOutcomes.map(o => ({ ...o, isNew: false, isEditing: false }));
+      const outcomesWithFlags = loadedOutcomes.map(o => ({ ...o, isNew: false, isEditing: true }));
       setOutcomes(outcomesWithFlags);
       setHasUnsavedChanges(false);
     } catch (err) {
@@ -153,6 +154,18 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
     isEditing: true,
   });
 
+  // Check if any outcome has required fields filled
+  const hasValidOutcomes = React.useMemo(() => {
+    return outcomes.some(outcome => 
+      outcome.phase.name.trim() !== '' && 
+      outcome.phase.track.trim() !== '' && 
+      outcome.phase.product.trim() !== '' && 
+      outcome.phase.environment.trim() !== '' && 
+      outcome.prefix.trim() !== '' && 
+      outcome.description.trim() !== ''
+    );
+  }, [outcomes]);
+
   const handleAddOutcome = () => {
     const newOutcome = createEmptyOutcome();
     setOutcomes(prev => [...prev, newOutcome]);
@@ -192,22 +205,18 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
       setSaving(true);
       setError(null);
       
-      // Get outcomes that need to be created (new ones)
-      const newOutcomes = outcomes.filter(o => o.isNew && !o.isEditing);
-      const existingOutcomes = outcomes.filter(o => !o.isNew);
+      // First, delete all existing outcomes to ensure clean state
+      await templateService.deleteAllOutcomes(user.preferred_username, templateId);
       
-      // Create new outcomes
-      for (const outcome of newOutcomes) {
+      // Create all outcomes using the POST endpoint
+      for (const outcome of outcomes) {
         const { phase, prefix, description, notes } = outcome;
-        await templateService.createOutcome(user.preferred_username, templateId, { phase, prefix, description, notes });
-      }
-      
-      // Update existing outcomes
-      for (const outcome of existingOutcomes) {
-        if (outcome.id) {
-          const { phase, prefix, description, notes } = outcome;
-          await templateService.updateOutcome(user.preferred_username, templateId, outcome.id, { phase, prefix, description, notes });
-        }
+        await templateService.createOutcome(user.preferred_username, templateId, { 
+          phase, 
+          prefix, 
+          description, 
+          notes 
+        });
       }
       
       // Reload outcomes to get updated IDs
@@ -254,7 +263,7 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                   variant="secondary"
                   icon={<SaveIcon />}
                   onClick={handleSaveAll}
-                  isDisabled={!hasUnsavedChanges || saving}
+                  isDisabled={!hasUnsavedChanges || !hasValidOutcomes || saving}
                   aria-label="Save all outcomes"
                 >
                   {saving ? 'Saving...' : 'Save All'}
@@ -311,7 +320,6 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                           value={outcome.phase.name}
                           onChange={(_, value) => handleUpdateOutcome(index, 'phase.name', value)}
                           placeholder="Phase name"
-                          isDisabled={!outcome.isEditing}
                         />
                       </td>
                       <td>
@@ -320,7 +328,6 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                           value={outcome.phase.track}
                           onChange={(_, value) => handleUpdateOutcome(index, 'phase.track', value)}
                           placeholder="Track"
-                          isDisabled={!outcome.isEditing}
                         />
                       </td>
                       <td>
@@ -329,16 +336,14 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                           value={outcome.phase.product}
                           onChange={(_, value) => handleUpdateOutcome(index, 'phase.product', value)}
                           placeholder="Product"
-                          isDisabled={!outcome.isEditing}
                         />
                       </td>
                       <td>
                         <TextInput
-                          id={`environment-${index}`}
+                          id={`phase-environment-${index}`}
                           value={outcome.phase.environment}
                           onChange={(_, value) => handleUpdateOutcome(index, 'phase.environment', value)}
                           placeholder="Environment"
-                          isDisabled={!outcome.isEditing}
                         />
                       </td>
                       <td>
@@ -346,7 +351,6 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                           id={`prefix-${index}`}
                           value={outcome.prefix}
                           onChange={(e) => handleUpdateOutcome(index, 'prefix', e.target.value)}
-                          disabled={!outcome.isEditing}
                           style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
                         >
                           <option value="">Select prefix</option>
@@ -363,7 +367,6 @@ const TemplateOutcomesTab: React.FC<TemplateOutcomesTabProps> = ({ templateId })
                           value={outcome.description}
                           onChange={(_, value) => handleUpdateOutcome(index, 'description', value)}
                           placeholder="Description"
-                          isDisabled={!outcome.isEditing}
                           rows={2}
                         />
                       </td>
