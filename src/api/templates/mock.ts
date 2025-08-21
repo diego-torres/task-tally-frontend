@@ -1,6 +1,7 @@
-import { CreateTemplateRequest, TemplateDto, UpdateTemplateRequest } from './types';
+import { CreateTemplateRequest, TemplateDto, UpdateTemplateRequest, OutcomeDto } from './types';
 
 let counter = 3;
+let outcomeCounter = 1;
 
 const seed: TemplateDto[] = [
   {
@@ -64,7 +65,62 @@ export const deleteTemplate = async (userId: string, id: number): Promise<void> 
   await simulate(undefined);
 };
 
+// Outcomes mock data
+const outcomes: Map<number, OutcomeDto[]> = new Map();
+
+export const listOutcomes = async (userId: string, templateId: number): Promise<OutcomeDto[]> => {
+  const templateOutcomes = outcomes.get(templateId) || [];
+  return simulate([...templateOutcomes]);
+};
+
+export const createOutcome = async (userId: string, templateId: number, outcome: OutcomeDto): Promise<OutcomeDto> => {
+  const newOutcome: OutcomeDto = {
+    ...outcome,
+    id: outcomeCounter++,
+  };
+  
+  const templateOutcomes = outcomes.get(templateId) || [];
+  templateOutcomes.push(newOutcome);
+  outcomes.set(templateId, templateOutcomes);
+  
+  return simulate({ ...newOutcome });
+};
+
+export const updateOutcome = async (userId: string, templateId: number, outcomeId: number, outcome: OutcomeDto): Promise<OutcomeDto> => {
+  const templateOutcomes = outcomes.get(templateId) || [];
+  const index = templateOutcomes.findIndex(o => o.id === outcomeId);
+  
+  if (index === -1) {
+    throw new Error('Outcome not found');
+  }
+  
+  const updatedOutcome: OutcomeDto = {
+    ...outcome,
+    id: outcomeId,
+  };
+  
+  templateOutcomes[index] = updatedOutcome;
+  outcomes.set(templateId, templateOutcomes);
+  
+  return simulate({ ...updatedOutcome });
+};
+
+export const deleteOutcome = async (userId: string, templateId: number, outcomeId: number): Promise<void> => {
+  const templateOutcomes = outcomes.get(templateId) || [];
+  const filteredOutcomes = templateOutcomes.filter(o => o.id !== outcomeId);
+  outcomes.set(templateId, filteredOutcomes);
+  
+  await simulate(undefined);
+};
+
+export const deleteAllOutcomes = async (userId: string, templateId: number): Promise<void> => {
+  outcomes.delete(templateId);
+  await simulate(undefined);
+};
+
 export const __reset = () => {
   templates = [...seed];
   counter = seed.length + 1;
+  outcomes.clear();
+  outcomeCounter = 1;
 };

@@ -38,6 +38,45 @@ components:
       format: date-time
       examples:
       - 2022-03-10T16:15:50Z
+    OutcomeDto:
+      type: object
+      required:
+      - prefix
+      - description
+      properties:
+        id:
+          type: integer
+          format: int64
+        phase:
+          $ref: "#/components/schemas/PhaseDto"
+        prefix:
+          type: string
+          pattern: \S
+        description:
+          type: string
+          pattern: \S
+        notes:
+          type: string
+    PhaseDto:
+      type: object
+      required:
+      - name
+      - track
+      - product
+      - environment
+      properties:
+        name:
+          type: string
+          pattern: \S
+        track:
+          type: string
+          pattern: \S
+        product:
+          type: string
+          pattern: \S
+        environment:
+          type: string
+          pattern: \S
     SshAvailabilityResponse:
       type: object
       properties:
@@ -459,6 +498,180 @@ paths:
       summary: Delete
       tags:
       - Template Resource
+      security:
+      - SecurityScheme:
+        - user
+  /api/users/{userId}/templates/{templateId}/outcomes:
+    get:
+      parameters:
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OutcomeDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      summary: List
+      tags:
+      - Outcome Resource
+      security:
+      - SecurityScheme:
+        - user
+    delete:
+      parameters:
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      summary: Delete All
+      tags:
+      - Outcome Resource
+      security:
+      - SecurityScheme:
+        - user
+    post:
+      parameters:
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutcomeDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutcomeDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+        "400":
+          description: Bad Request
+      summary: Create
+      tags:
+      - Outcome Resource
+      security:
+      - SecurityScheme:
+        - user
+  /api/users/{userId}/templates/{templateId}/outcomes/{id}:
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutcomeDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutcomeDto"
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+        "400":
+          description: Bad Request
+      summary: Update
+      tags:
+      - Outcome Resource
+      security:
+      - SecurityScheme:
+        - user
+    delete:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      summary: Delete
+      tags:
+      - Outcome Resource
       security:
       - SecurityScheme:
         - user

@@ -1,5 +1,22 @@
 export type Provider = 'github' | 'gitlab';
 
+// Phase DTO as defined in the API
+export interface PhaseDto {
+  name: string;
+  track: string;
+  product: string;
+  environment: string;
+}
+
+// Outcome DTO as defined in the API
+export interface OutcomeDto {
+  id?: number;
+  phase: PhaseDto;
+  prefix: string;
+  description: string;
+  notes?: string;
+}
+
 // Base item interface for common fields
 export interface BaseItem {
   phase: string;
@@ -10,7 +27,7 @@ export interface BaseItem {
   scopingNotes?: string;
 }
 
-// Outcomes
+// Legacy Outcome interface for backward compatibility
 export interface Outcome extends BaseItem {
   outcomeText: string;
 }

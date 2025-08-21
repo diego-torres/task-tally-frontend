@@ -132,10 +132,7 @@ const TemplateEditPage: React.FC = () => {
           </Tab>
 
           <Tab eventKey={1} title={<TabTitleText>Outcomes</TabTitleText>}>
-            <TemplateOutcomesTab
-              outcomes={template.outcomes || []}
-              onUpdate={(outcomes) => updateTemplateField('outcomes', outcomes)}
-            />
+            <TemplateOutcomesTab templateId={parseInt(id!, 10)} />
           </Tab>
 
           <Tab eventKey={2} title={<TabTitleText>Tasks</TabTitleText>}>
